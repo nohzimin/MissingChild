@@ -11,8 +11,12 @@ public class ReportDto {
 
     private Integer reporterId;
     private Integer childId;
+
     private String reporterName;
+
     private String reporterPhone;
+
     private String reporterEmail;
+
     private LocalDate reportDate;
 }

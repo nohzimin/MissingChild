@@ -1,15 +1,11 @@
 package com.mycom.myapp.controller;
 
-import com.mycom.myapp.dto.MissingChildDto;
-import com.mycom.myapp.dto.MissingChildRegisterDto;
-import com.mycom.myapp.dto.MissingChildResultDto;
-import com.mycom.myapp.dto.ReportDto;
+import com.mycom.myapp.dto.*;
 import com.mycom.myapp.service.MissingChildService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -17,6 +13,8 @@ import java.time.LocalDate;
 @RequestMapping("/api/missing-child")
 @RequiredArgsConstructor
 public class MissingChildController {
+
+    // s3 예시 : https://velog.io/@leeeeeyeon/AWS-S3%EB%A1%9C-%ED%8C%8C%EC%9D%BC-%EC%84%9C%EB%B2%84%EB%A5%BC-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90
 
     private final MissingChildService missingChildService;
 
