@@ -46,6 +46,14 @@
       margin-bottom: 1.5rem;
       color: #000000;
     }
+    .info-search-label {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      margin-top: 3rem;
+      color: #000000;
+    }
     .search-btn {
       font-size: 1.2rem;
       padding: 0.5rem 2rem;
@@ -62,6 +70,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
+      flex-grow: 1; /* 추가: 두 개의 섹션이 같은 높이를 갖도록 설정 */
     }
     .no-results {
       border: 1px solid #e5e5e5;
@@ -69,6 +78,13 @@
       background-color: #f9f9f9;
       padding: 1rem;
       text-align: center;
+    }
+
+    .progress {
+      height: 20px;
+    }
+    .progress-bar {
+      background-color: #4CAF50;
     }
   </style>
 </head>
@@ -103,14 +119,17 @@
 <div class="search-container">
   <form id="searchForm">
     <div class="row">
-      <div class="col-md-6 mb-3">
+      <div class="col-md-6 mb-5">
         <div class="image-search-container">
           <h2 class="image-search-label">이미지로 검색하기</h2>
           <div id="imagePreview" class="mb-3"></div>
           <input type="file" id="photo" name="photo" accept="image/*" class="form-control">
+          <!-- 파일 선택 바로 아래에 예측 결과 표시 -->
+          <div id="label-container" style="width:100%; margin-top: 20px;"></div>
         </div>
       </div>
       <div class="col-md-6">
+        <h2 class="info-search-label mt-5"> 인적사항으로 검색하기</h2>
         <div class="form-group mb-3">
           <label for="name" class="form-label">이름</label>
           <input type="text" id="name" name="name" class="form-control">
@@ -141,8 +160,8 @@
       </div>
     </div>
     <div class="text-center mt-4">
-      <button type="submit" class="btn btn-primary search-btn">검색</button>
       <button type="button" id="resetBtn" class="btn btn-primary search-btn">초기화</button>
+      <button type="submit" class="btn btn-primary search-btn"> 인적사항 검색</button>
     </div>
   </form>
 </div>
@@ -177,15 +196,11 @@
 
   // 초기화 버튼 클릭 이벤트 리스너
   document.getElementById('resetBtn').addEventListener('click', function() {
-    // 모든 입력 필드를 초기화
-    document.getElementById('searchForm').reset();
-
-    // 이미지 미리보기 초기화
-    document.getElementById('imagePreview').innerHTML = '';
-
-    // 검색 결과 영역 초기화
-    document.querySelector('#searchResults').innerHTML = '';
+    // 페이지 새로 고침
+    location.reload();
   });
+
+
 
   function renderSearchResults(missingChildDtoList) {
     const searchResultsContainer = document.querySelector('#searchResults');
@@ -219,12 +234,72 @@
   }
 
 
+</script>
 
 
+<!--https://teachablemachine.withgoogle.com/models/U81IkzzcN/-->
+<!--(Teachable Machine 모델 로드 및 예측-->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 
+<script>
+  const URL = "/assets/my_model/";
+  let model, labelContainer, maxPredictions;
 
+  window.onload = function () {
+    init();
+  };
+
+  async function init() {
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
+    labelContainer = document.getElementById("label-container");
+
+    for (let i = 0; i < maxPredictions; i++) {
+      labelContainer.appendChild(document.createElement("div"));
+    }
+  }
+
+  async function predict(image) {
+    const prediction = await model.predict(image, false);
+
+    for (let i = 0; i < maxPredictions; i++) {
+      let classPrediction = "";
+      if (prediction[i].probability >= 0.3) {
+        classPrediction = `<div style="margin:10px;">${prediction[i].className} : ${(prediction[i].probability * 100).toFixed(2)}%</div>
+                           <div class="progress">
+                             <div class="progress-bar" role="progressbar" style="width: ${prediction[i].probability * 100}%"></div>
+                           </div>`;
+      }
+      labelContainer.childNodes[i].innerHTML = classPrediction;
+    }
+  }
+
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.onload = function () {
+          predict(img);
+        };
+        document.getElementById("imagePreview").innerHTML = '';
+        document.getElementById("imagePreview").appendChild(img);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  document.getElementById("photo").addEventListener("change", function () {
+    readURL(this);
+  });
 
 
 </script>
+
+
 </body>
 </html>
