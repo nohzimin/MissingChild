@@ -86,42 +86,36 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildResultDto;
     }
 
-//    @Override
-//    public MissingChildResultDto searchByClassNames(List<String> classNames) {
-//        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
-//        List<MissingChildDto> missingChildDtoList = new ArrayList<>(); // List to store all Dto objects
-//
-//        // Iterate over each className in the list
-//        for (String className : classNames) {
-//            // Fetch MissingChild entities where photoUrl matches className + ".png"
-//            List<MissingChild> missingChildList = missingChildRepository.searchByClassName(className);
-//
-//            // Convert MissingChild entities to MissingChildDto and add them to the list
-//            missingChildList.forEach(child -> {
-//                MissingChildDto missingChildDto = new MissingChildDto();
-//                missingChildDto.setChildId(child.getChildId());
-//                missingChildDto.setChildName(child.getChildName());
-//                missingChildDto.setDateOfBirth(child.getDateOfBirth());
-//                missingChildDto.setChildGender(child.getChildGender());
-//                missingChildDto.setChildAge(child.getChildAge());
-//                missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
-//                missingChildDto.setMissingSince(child.getMissingSince());
-//                missingChildDto.setPhotoUrl(child.getPhotoUrl());
-//
-//                missingChildDtoList.add(missingChildDto); // Add the DTO to the result list
-//            });
-//        }
-//
-//        // Set the result as 'success' and add the Dto list to the response
-//        if (!missingChildDtoList.isEmpty()) {
-//            missingChildResultDto.setResult("success");
-//            missingChildResultDto.setMissingChildDtoList(missingChildDtoList);
-//        } else {
-//            missingChildResultDto.setResult("failure");
-//        }
-//
-//        return missingChildResultDto;
-//    }
+    @Override
+    public MissingChildResultDto searchRecent() {
+        // MissingChildResultDto 초기화
+        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
+
+        // 모든 MissingChild 엔터티를 가져옴
+        List<MissingChild> missingChildList = missingChildRepository.searchRecent();
+
+        // missingChild entity 리스트를 MissingChildDto 변환 후 리스트에 담기
+        List<MissingChildDto> missingChildDtoList = new ArrayList<>();
+        missingChildList.forEach(child -> {
+            MissingChildDto missingChildDto = new MissingChildDto();
+            missingChildDto.setChildId(child.getChildId());
+            missingChildDto.setChildName(child.getChildName());
+            missingChildDto.setDateOfBirth(child.getDateOfBirth());
+            missingChildDto.setChildGender(child.getChildGender());
+            missingChildDto.setChildAge(child.getChildAge());
+            missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
+            missingChildDto.setMissingSince(child.getMissingSince());
+            missingChildDto.setPhotoUrl(child.getPhotoUrl());
+
+            missingChildDtoList.add(missingChildDto);
+        });
+
+        // 변환된 리스트를 MissingChildResultDto에 담기 + 결과 성공
+        missingChildResultDto.setMissingChildDtoList(missingChildDtoList);
+        missingChildResultDto.setResult("success");
+
+        return missingChildResultDto;
+    }
 
 
     @Override

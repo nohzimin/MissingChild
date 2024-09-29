@@ -29,10 +29,21 @@ public interface MissingChildRepository extends JpaRepository<MissingChild, Inte
     );
 
 
-    // className .Png = photoUrl 인거 불러오기
+    //최근 등록된 6명 불러오기
+    @Query("""
+            select mc from MissingChild mc
+            order by mc.childId desc limit 8
+    """)
+    List<MissingChild> searchRecent();
+
+
+
+
+
+
+    // 이미지 검색
     @Query("select mc from MissingChild mc where mc.photoUrl LIKE %:className%")
     List<MissingChild> searchByClassName(@Param("className") String className);
 
-    List<MissingChild> findByPhotoUrl(String photoUrl);
 
 }
