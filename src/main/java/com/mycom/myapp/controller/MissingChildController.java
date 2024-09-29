@@ -35,6 +35,11 @@ public class MissingChildController {
 
     }
 
+    @GetMapping("/recentList")
+    public MissingChildResultDto searchRecent(){
+        return missingChildService.searchRecent();
+    }
+
 
     @PostMapping("/searchImage")
     public MissingChildResultDto searchMissingChildByImage(@RequestBody SearchImageRequest request) {

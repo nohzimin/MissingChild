@@ -115,9 +115,11 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .case-card img {
-            width: 100%;
-            height: 200px;
+            width: 50%;
+            height: 115px;
+            border-radius: 100%;
             object-fit: cover;
+            margin: 0 0 0 5px;
         }
         .case-info {
             padding: 1rem;
@@ -209,62 +211,10 @@
                 <div id="caseCarousel" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <div class="cases-grid">
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>김철수</h3>
-                                        <p>나이: 10세</p>
-                                        <p>실종일: 2024-03-15</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 1" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>이영희</h3>
-                                        <p>나이: 8세</p>
-                                        <p>실종일: 2024-03-20</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 2" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>박민수</h3>
-                                        <p>나이: 12세</p>
-                                        <p>실종일: 2024-03-22</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 3" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
+                            <div id="searchResults" class="cases-grid">
+                                <!--  동적으로 추가-->
                             </div>
                         </div>
-                        <div class="carousel-item">
-                            <div class="cases-grid">
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>최지훈</h3>
-                                        <p>나이: 9세</p>
-                                        <p>실종일: 2024-03-25</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 4" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>장유진</h3>
-                                        <p>나이: 7세</p>
-                                        <p>실종일: 2024-03-30</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 5" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
-                                <div class="case-card d-flex align-items-center">
-                                    <div class="case-info flex-grow-1">
-                                        <h3>한준서</h3>
-                                        <p>나이: 11세</p>
-                                        <p>실종일: 2024-04-01</p>
-                                    </div>
-                                    <img src="/assets/img/index/person.png" alt="실종아동 6" class="img-fluid" style="max-width: 150px; height: auto;">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 추가 슬라이드가 필요하면 여기에 추가 -->
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#caseCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -301,5 +251,43 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
 </script>
+
+
+    <script>
+
+        window.onload = async function () {
+            recentList();
+        }
+
+        async function recentList() {
+            let url = "/api/missing-child/recentList";
+            let response = await fetch(url);
+            let data = await response.json(); //
+            if( data.result == "success" ) {
+                console.log(data);
+
+                let missingChildDtoList = data.missingChildDtoList;
+
+
+                let listHtml = ``;
+                missingChildDtoList.forEach( child => {
+                    listHtml += `<div class="case-card d-flex align-items-center">
+                                    <img src="/assets/img/child/${child.photoUrl}" class="card-img-top" alt="${child.childName}" >
+                                    <div class="case-info flex-grow-1">
+                                        <h3>${child.childName}</h3>
+                                        <p>현재나이: <span>${child.childAge}</span>세<br> </p>
+                                        <p>실종일자: <br> <span>${child.missingSince}</span></p>
+                                    </div>
+                                </div>`;
+                });
+                document.querySelector('#searchResults').innerHTML = listHtml;
+
+            } else {
+                alert("상세조회 과정에서 오류가 발생했습니다.");
+            }
+
+        }
+
+    </script>
 </body>
 </html>

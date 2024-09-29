@@ -12,7 +12,7 @@ public interface MissingChildService {
 
     MissingChildResultDto getAllMissingChild();
     MissingChildResultDto searchMissingChild(String name, Character gender, Integer age, String location, LocalDate date);
-//    MissingChildResultDto searchByClassNames(List<String> classNames);
+    MissingChildResultDto searchRecent();
     List<MissingChildDto> searchByClassNames(List<String> classNames);
 
 

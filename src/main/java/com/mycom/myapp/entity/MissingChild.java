@@ -40,7 +40,7 @@ public class MissingChild {
     @Column(name = "photo_url")
     private String photoUrl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "report_id", nullable = false)
     @ToString.Exclude
     private Report report;
