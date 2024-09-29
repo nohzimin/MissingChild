@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/missing-child")
@@ -33,6 +34,26 @@ public class MissingChildController {
         return missingChildService.searchMissingChild(name, gender, age, location, date);
 
     }
+
+
+    @PostMapping("/searchImage")
+    public MissingChildResultDto searchMissingChildByImage(@RequestBody SearchImageRequest request) {
+        List<String> classNames = request.getClassNames();
+        List<MissingChildDto> missingChildDtoList = missingChildService.searchByClassNames(classNames);
+
+        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
+        if (!missingChildDtoList.isEmpty()) {
+            missingChildResultDto.setResult("success");
+            missingChildResultDto.setMissingChildDtoList(missingChildDtoList);
+        } else {
+            missingChildResultDto.setResult("failure");
+        }
+        return missingChildResultDto;
+    }
+
+
+
+
 
 
     @PutMapping("/register/report")
