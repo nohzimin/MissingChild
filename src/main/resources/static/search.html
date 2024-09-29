@@ -262,20 +262,66 @@
     }
   }
 
+  // async function predict(image) {
+  //   const prediction = await model.predict(image, false);
+  //
+  //   for (let i = 0; i < maxPredictions; i++) {
+  //     let classPrediction = "";
+  //     if (prediction[i].probability >= 0.3) {
+  //       classPrediction = `<div style="margin:10px;">${prediction[i].className} : ${(prediction[i].probability * 100).toFixed(2)}%</div>
+  //                          <div class="progress">
+  //                            <div class="progress-bar" role="progressbar" style="width: ${prediction[i].probability * 100}%"></div>
+  //                          </div>`;
+  //     }
+  //     labelContainer.childNodes[i].innerHTML = classPrediction;
+  //   }
+  // }
+
+
   async function predict(image) {
     const prediction = await model.predict(image, false);
+    let classNames = []; // Array to store all valid classNames
 
+    // Loop through all predictions
     for (let i = 0; i < maxPredictions; i++) {
       let classPrediction = "";
       if (prediction[i].probability >= 0.3) {
-        classPrediction = `<div style="margin:10px;">${prediction[i].className} : ${(prediction[i].probability * 100).toFixed(2)}%</div>
-                           <div class="progress">
-                             <div class="progress-bar" role="progressbar" style="width: ${prediction[i].probability * 100}%"></div>
-                           </div>`;
+        const className = prediction[i].className;
+        classNames.push(className); // Add className to the array
+        console.log(classNames);
+
+        classPrediction = `<div style="margin:10px;">${className} : ${(prediction[i].probability * 100).toFixed(2)}%</div>
+                         <div class="progress">
+                           <div class="progress-bar" role="progressbar" style="width: ${prediction[i].probability * 100}%"></div>
+                         </div>`;
       }
       labelContainer.childNodes[i].innerHTML = classPrediction;
     }
+
+    // If there are valid class names, make a fetch request for all of them
+    if (classNames.length > 0) {
+      fetch('/api/missing-child/searchImage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ classNames }) // Send all class names in a POST request
+      })
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                if (data.result === 'success') {
+                  renderSearchResults(data.missingChildDtoList); // Display all matching children
+                } else {
+                  alert("검색 중 오류가 발생했습니다.");
+                }
+              })
+              .catch(error => console.error('Error:', error));
+    }
   }
+
+
+
 
   function readURL(input) {
     if (input.files && input.files[0]) {

@@ -22,8 +22,17 @@ public interface MissingChildRepository extends JpaRepository<MissingChild, Inte
                and (:date IS NULL OR mc.missingSince = :date)
     """)
     List<MissingChild> searchMissingChild( @Param("name") String name,
-                                        @Param("gender") Character gender,
-                                        @Param("age") Integer age,
-                                        @Param("location") String location,
-                                        @Param("date") LocalDate date );
+                                            @Param("gender") Character gender,
+                                            @Param("age") Integer age,
+                                            @Param("location") String location,
+                                            @Param("date") LocalDate date
+    );
+
+
+    // className .Png = photoUrl 인거 불러오기
+    @Query("select mc from MissingChild mc where mc.photoUrl LIKE %:className%")
+    List<MissingChild> searchByClassName(@Param("className") String className);
+
+    List<MissingChild> findByPhotoUrl(String photoUrl);
+
 }

@@ -10,15 +10,12 @@ import com.mycom.myapp.repository.MissingChildRepository;
 import com.mycom.myapp.repository.ReportRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,6 +84,71 @@ public class MissingChildServiceImpl implements MissingChildService {
         missingChildResultDto.setResult("success");
 
         return missingChildResultDto;
+    }
+
+//    @Override
+//    public MissingChildResultDto searchByClassNames(List<String> classNames) {
+//        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
+//        List<MissingChildDto> missingChildDtoList = new ArrayList<>(); // List to store all Dto objects
+//
+//        // Iterate over each className in the list
+//        for (String className : classNames) {
+//            // Fetch MissingChild entities where photoUrl matches className + ".png"
+//            List<MissingChild> missingChildList = missingChildRepository.searchByClassName(className);
+//
+//            // Convert MissingChild entities to MissingChildDto and add them to the list
+//            missingChildList.forEach(child -> {
+//                MissingChildDto missingChildDto = new MissingChildDto();
+//                missingChildDto.setChildId(child.getChildId());
+//                missingChildDto.setChildName(child.getChildName());
+//                missingChildDto.setDateOfBirth(child.getDateOfBirth());
+//                missingChildDto.setChildGender(child.getChildGender());
+//                missingChildDto.setChildAge(child.getChildAge());
+//                missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
+//                missingChildDto.setMissingSince(child.getMissingSince());
+//                missingChildDto.setPhotoUrl(child.getPhotoUrl());
+//
+//                missingChildDtoList.add(missingChildDto); // Add the DTO to the result list
+//            });
+//        }
+//
+//        // Set the result as 'success' and add the Dto list to the response
+//        if (!missingChildDtoList.isEmpty()) {
+//            missingChildResultDto.setResult("success");
+//            missingChildResultDto.setMissingChildDtoList(missingChildDtoList);
+//        } else {
+//            missingChildResultDto.setResult("failure");
+//        }
+//
+//        return missingChildResultDto;
+//    }
+
+
+    @Override
+    public  List<MissingChildDto> searchByClassNames(List<String> classNames) {
+        List<MissingChildDto> missingChildDtoList = new ArrayList<>();
+
+        for (String className : classNames) {
+            // Fetching the MissingChild entities from the repository
+            List<MissingChild> missingChildList = missingChildRepository.searchByClassName(className);
+
+            // Converting each MissingChild entity to MissingChildDto
+            missingChildList.forEach(child -> {
+                MissingChildDto missingChildDto = new MissingChildDto();
+                missingChildDto.setChildId(child.getChildId());
+                missingChildDto.setChildName(child.getChildName());
+                missingChildDto.setDateOfBirth(child.getDateOfBirth());
+                missingChildDto.setChildGender(child.getChildGender());
+                missingChildDto.setChildAge(child.getChildAge());
+                missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
+                missingChildDto.setMissingSince(child.getMissingSince());
+                missingChildDto.setPhotoUrl(child.getPhotoUrl());
+
+                missingChildDtoList.add(missingChildDto); // Add the DTO to the results list
+            });
+        }
+
+        return missingChildDtoList;
     }
 
     @Override
