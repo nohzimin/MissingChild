@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Edit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="/assets/css/newSidebar.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff9e6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: white;
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #5a4d41;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .profile-info {
+            background-color: #fff3b0;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(255, 224, 102, 0.2);
+        }
+
+        .profile-info label {
+            color: #5a4d41;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #ffe066;
+            border-radius: 15px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+
+        .form-control:focus {
+            border-color: #ffd43b;
+            box-shadow: 0 0 0 0.25rem rgba(255, 224, 102, 0.25);
+        }
+
+        .form-control[readonly] {
+            background-color: #fff9e6;
+            border-color: #ffd43b;
+            opacity: 0.8;
+        }
+
+        .mb-3 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        #updateBtn {
+            background-color: #ffe066;
+            border: none;
+            color: #5a4d41;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(255, 224, 102, 0.3);
+        }
+
+        #updateBtn:hover {
+            background-color: #ffd43b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 224, 102, 0.4);
+        }
+
+        #updateBtn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(255, 224, 102, 0.3);
+        }
+
+        /* Password input fields specific styling */
+        input[type="password"] {
+            background-color: white;
+            border: 2px solid #ffe066;
+        }
+
+        input[type="password"]:focus {
+            border-color: #ffd43b;
+            box-shadow: 0 0 0 0.25rem rgba(255, 224, 102, 0.25);
+        }
+
+        /* Phone number field specific styling */
+        #phone {
+            letter-spacing: 1px;
+        }
+
+        /* Add icons to input fields */
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5a4d41;
+            opacity: 0.5;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Animation for input focus */
+        .form-control:focus {
+            animation: pulse 0.3s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <span id="toggleSidebar" class="navbar-toggler-icon"></span>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i> 메인페이지</a>
+                </li>
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> 로그인</a>
+                </li>
+                <li class="nav-item" th:if="${user == null}">
+                    <a class="nav-link" href="/signup"><i class="fas fa-user-plus"></i> 회원가입</a>
+                </li>
+                <li class="nav-item" th:if="${user != null}">
+                    <a class="nav-link" th:text="${user.name + '님'}"><i class="fas fa-user-plus"></i></a>
+                </li>
+                <li class="nav-item" th:if="${user != null}">
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar with Icons -->
+<div id="sidebar">
+    <a href="/children/select"><i class="fas fa-child"></i> 아이 프로필 변경</a>
+    <a href="/children/page"><i class="fas fa-edit"></i> 아이 정보 수정</a>
+    <a href="/userpage"><i class="fas fa-user"></i> 계정보기</a>
+    <a href="#"><i class="fas fa-history"></i> 최근 책 보기</a>
+    <a href="/ChildFavorBookList.html"><i class="fas fa-heart"></i> 좋아요 누른 책 보기</a>
+    <a href="#"><i class="fas fa-tags"></i> 카테고리 별 책보기</a>
+    <a href="/lottery/form"><i class="fas fa-gift"></i> 선착순 이벤트</a>
+</div>
+<script src="/assets/js/newSidebar.js"></script>
+
+
+
+
+
+<div class="container">
+    <h2 class="text-center mb-4">회원정보 수정</h2>
+
+    <div class="profile-info">
+        <!-- Name (Read-only) -->
+        <div class="mb-3">
+            <label for="name">이름</label>
+            <input type="text" class="form-control" id="name" th:value="${userDto.name}" readonly>
+        </div>
+
+        <!-- Email (Read-only) -->
+        <div class="mb-3">
+            <label for="email">이메일</label>
+            <input type="email" class="form-control" id="email" th:value="${userDto.email}" readonly>
+        </div>
+
+        <!-- Phone Number (Editable) -->
+        <div class="mb-3">
+            <label for="phone">전화번호</label>
+            <input type="text" class="form-control" id="phone" th:value="${userDto.phone}" placeholder="010-0000-0000">
+        </div>
+    </div>
+
+    <!-- Password Reset Section -->
+    <div class="mb-3">
+        <label for="newPassword">새 비밀번호</label>
+        <input type="password" class="form-control" id="newPassword" placeholder="새 비밀번호">
+    </div>
+
+    <div class="mb-3">
+        <label for="confirmPassword">비밀번호 확인</label>
+        <input type="password" class="form-control" id="confirmPassword" placeholder="비밀번호 확인">
+    </div>
+
+    <!-- Update Button -->
+    <button id="updateBtn" class="btn btn-custom">회원정보 수정</button>
+
+</div>
+
+<script>
+    // 페이지 로드 시 사용자 정보 가져오기
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/userpageProc', {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 서버에서 받은 데이터를 입력 필드에 채움
+                document.getElementById('name').value = data.userDto.name;
+                document.getElementById('email').value = data.userDto.email;
+                document.getElementById('phone').value = data.userDto.phone;
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    });
+
+    // 회원정보 수정 버튼 클릭 시
+    document.getElementById('updateBtn').addEventListener('click', function() {
+        const phone = document.getElementById('phone').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (newPassword !== confirmPassword) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        // 사용자 정보 수정 요청
+        const userData = {
+            phone: phone,
+            password: newPassword
+        };
+
+        fetch('/userpage/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result.includes("success")) {
+                    alert("회원정보가 성공적으로 수정되었습니다.");
+                } else {
+                    alert("회원정보 수정에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error('Error updating user data:', error);
+                alert("회원정보 수정에 실패했습니다.");
+            });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
