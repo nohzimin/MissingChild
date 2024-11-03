@@ -20,6 +20,6 @@ public class MissingChildDto {
     private LocalDate missingSince;
     private String photoUrl;
 
-    private List<ReportDto> reportDtoList = new ArrayList<>();
+//    private List<ReportDto> reportDtoList = new ArrayList<>();
 
 }

@@ -4,6 +4,7 @@ import com.mycom.myapp.domain.child.dto.MissingChildDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
 import com.mycom.myapp.domain.child.entity.MissingChild;
 import com.mycom.myapp.domain.child.repository.MissingChildRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -142,9 +144,26 @@ public class MissingChildServiceImpl implements MissingChildService {
 
     @Override
     @Transactional
-    public MissingChild getMissingChildById(Integer childId) {
-        return missingChildRepository.findById(childId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 아이를 찾을 수 없습니다."));
+    public MissingChildDto getMissingChildById(Integer childId) {
+        MissingChildDto missingChildDto = new MissingChildDto();
+        MissingChild missingChild = missingChildRepository.findById(childId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 아이디의 아동을 찾을 수 없습니다: " + childId));
+
+        missingChildDto.setChildId(childId);
+        missingChildDto.setChildName(missingChild.getChildName());
+        missingChildDto.setChildGender(missingChild.getChildGender());
+        missingChildDto.setDateOfBirth(missingChild.getDateOfBirth());
+        missingChildDto.setChildAge(missingChild.getChildAge());
+        missingChildDto.setLastKnownLocation(missingChild.getLastKnownLocation());
+        missingChildDto.setMissingSince(missingChild.getMissingSince());
+        missingChildDto.setPhotoUrl(missingChild.getPhotoUrl());
+
+        // 필요시 User의 특정 정보 추가 설정 (예: User 이름)
+//        missingChildDto.setUserName(missingChild.getUser().getName());
+
+
+        return missingChildDto;
+
     }
 
 

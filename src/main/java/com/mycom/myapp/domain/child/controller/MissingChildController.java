@@ -60,8 +60,8 @@ public class MissingChildController {
         return missingChildResultDto;
     }
 
-    @GetMapping("/{childId}")
-    public MissingChild getMissingChildDetail(@PathVariable Integer childId) {
+    @GetMapping("/list/{childId}")
+    public MissingChildDto getMissingChildDetail(@PathVariable Integer childId) {
         return missingChildService.getMissingChildById(childId);
     }
 
