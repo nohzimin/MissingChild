@@ -1,0 +1,157 @@
+/* 헤더 스타일 */
+.top-header {
+    border-bottom: 1px solid #eee;
+    padding: 15px 0;
+    background: white;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 로고 스타일 */
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 35px;
+    width: auto;
+}
+
+/* 왼쪽 네비게이션 그룹 */
+.nav-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.dropdown-toggle:hover {
+    border-color: #ddd;
+    background-color: #f8f8f8;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 160px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: none;
+    z-index: 1000;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f5f5f5;
+}
+
+/* 네비게이션 링크 공통 스타일 */
+.nav-link {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #ddd;
+}
+
+.nav-link:hover {
+    background-color: #f8f8f8;
+}
+
+/* 오른쪽 네비게이션 */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-right .nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.nav-right .nav-link.dark {
+    background-color: #333;
+    color: white;
+    border-color: #333;
+}
+
+.nav-right .nav-link.dark:hover {
+    background-color: #222;
+}
+
+/* 아이콘 스타일 */
+.nav-icon {
+    font-size: 16px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .nav-group {
+        display: none;
+    }
+
+    .header-container {
+        padding: 0 15px;
+    }
+
+    .nav-right {
+        gap: 5px;
+    }
+
+    .nav-link {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .logo-image {
+        height: 30px;
+    }
+}

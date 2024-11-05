@@ -39,6 +39,7 @@ public class UserServiceImpl implements UserService {
         String email = signupRequestDto.getEmail();
         String password = signupRequestDto.getPassword();
         String name = signupRequestDto.getName();
+        String nickName = signupRequestDto.getNickName();
         String phone = signupRequestDto.getPhone();
 
         // 이메일 중복 확인
@@ -54,6 +55,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setName(name);
+        user.setNickName(nickName);
         user.setPhone(phone);
         user.setCreatedAt(LocalDateTime.now()); // 회원가입 시각 자동 저장
         user.setUpdatedAt(LocalDateTime.now());
@@ -85,6 +87,7 @@ public class UserServiceImpl implements UserService {
 
         userDto.setUserId(user.getUserId());
         userDto.setName(user.getName());
+        userDto.setNickName(user.getNickName());
         userDto.setEmail(user.getEmail());
         userDto.setPassword(user.getPassword());
         userDto.setPhone(user.getPhone());
@@ -106,10 +109,11 @@ public class UserServiceImpl implements UserService {
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
 
-                // 비밀번호 , 전화번호 수정
+                // 비밀번호 , 전화번호, 닉네임 수정
                 if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
                     String encodedPassword = bCryptPasswordEncoder.encode(userDto.getPassword());
                     user.setPassword(encodedPassword);
+                    user.setNickName(userDto.getNickName());
                 }
                 user.setPhone(userDto.getPhone());
 

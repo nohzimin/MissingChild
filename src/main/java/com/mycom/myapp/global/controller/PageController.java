@@ -74,6 +74,44 @@ public class PageController {
         return "index";
     }
 
+    @GetMapping("/board")
+    public String PostListPage(HttpSession session, Model model) {
+        // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
+        String email = (String) session.getAttribute("userEmail");
+
+        System.out.println("---------------------------");
+        System.out.println(email);
+        System.out.println("---------------------------");
+
+        if (email != null) {  // 세션에 저장된 이메일이 있을 경우
+            User user = userRepository.findByEmail(email);
+            model.addAttribute("user", user);
+        } else {
+            model.addAttribute("user", null);
+        }
+
+        return "postList";
+    }
+
+    @GetMapping("/mypage")
+    public String MyPage(HttpSession session, Model model) {
+        // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
+        String email = (String) session.getAttribute("userEmail");
+
+        System.out.println("---------------------------");
+        System.out.println(email);
+        System.out.println("---------------------------");
+
+        if (email != null) {  // 세션에 저장된 이메일이 있을 경우
+            User user = userRepository.findByEmail(email);
+            model.addAttribute("user", user);
+        } else {
+            model.addAttribute("user", null);
+        }
+
+        return "userPage";
+    }
+
     @GetMapping("/missing-child/list")
     public String AllMissingChildListPage(HttpSession session, Model model) {
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
