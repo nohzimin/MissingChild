@@ -25,6 +25,7 @@ public class PostController {
     private final UserRepository userRepository;
 
 
+    // 게시글 전체 리스트 불러오기
     @GetMapping("/list")
     public String PostListPage(HttpSession session, Model model) {
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
@@ -40,7 +41,7 @@ public class PostController {
     }
 
 
-    // 게시글 수정
+    // 게시글 수정 페이지 연결
     @GetMapping("/edit/{postId}")
     public String PostEditPage(@PathVariable Long postId, HttpSession session, Model model) {
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
@@ -72,15 +73,6 @@ public class PostController {
 
         return "PostDetail";
     }
-
-
-    // 게시글 삭제
-    @PostMapping("/delete/{postId}")
-    public String deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
-        return "redirect:/board"; // 삭제 후 게시판 목록으로 이동
-    }
-
 
 
 }

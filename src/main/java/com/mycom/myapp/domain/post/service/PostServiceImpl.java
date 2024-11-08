@@ -83,6 +83,7 @@ public class PostServiceImpl implements PostService {
         dto.setUserId(post.getUser().getUserId());
         dto.setCreatedAt(post.getCreatedAt());
         dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setAuthorNickname(post.getUser().getNickName());
         return dto;
     }
 }
