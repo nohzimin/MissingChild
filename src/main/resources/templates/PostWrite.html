@@ -106,71 +106,76 @@
   </style>
 </head>
 <body>
-  
+
 <header class="top-header">
-    <div class="header-container">
-      <!-- 로고와 왼쪽 네비게이션 -->
-      <div class="nav-group">
-        <a href="/" class="logo">
-          <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
-        </a>
-  
-        <!-- 주요기능 드롭다운 -->
-        <div class="nav-dropdown">
-          <button class="dropdown-toggle">
-            주요기능
-            <i class="fas fa-chevron-down nav-icon"></i>
-          </button>
-          <div class="dropdown-menu">
-            <a href="/missing-child/list">실종 아동 보기</a>
-            <a href="/missing-child/register">실종 아동 등록</a>
-          </div>
+  <div class="header-container">
+    <!-- 로고와 왼쪽 네비게이션 -->
+    <div class="nav-group">
+      <a href="/" class="logo">
+        <img src="/assets/img/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+      </a>
+
+      <!-- 주요기능 드롭다운 -->
+      <div class="nav-dropdown">
+        <button class="dropdown-toggle">
+          주요기능
+          <i class="fas fa-chevron-down nav-icon"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/missing-child/list">실종 아동 보기</a>
+          <a href="/missing-child/register">실종 아동 등록</a>
         </div>
-  
-        <!-- 검색 버튼 -->
-        <a href="/missing-child/search" class="nav-link">
-          <i class="fas fa-search nav-icon"></i>
-          실종아동 검색
-        </a>
-  
-        <!-- 게시판 버튼 -->
-        <a href="/board" class="nav-link">
-          <i class="fas fa-list nav-icon"></i>
-          게시판
-        </a>
       </div>
-  
-      <!-- 오른쪽 네비게이션 -->
-      <ul class="nav-right">
-        <li class="nav-item" th:if="${user != null}">
-          <a class="nav-link" href="/mypage">
-            <i class="fas fa-home nav-icon"></i> MYPAGE
-          </a>
-        </li>
-        <li class="nav-item" th:if="${user == null}">
-          <a class="nav-link" href="/login">
-            <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
-          </a>
-        </li>
-        <li class="nav-item" th:if="${user == null}">
-          <a class="nav-link dark" href="/signup">
-            <i class="fas fa-user-plus nav-icon"></i> 회원가입
-          </a>
-        </li>
-        <li class="nav-item" th:if="${user != null}">
-          <a class="nav-link">
-            <i class="fas fa-user nav-icon"></i>
-            <span th:text="${user.name + '님'}">이름</span>
-          </a>
-        </li>
-        <li class="nav-item" th:if="${user != null}">
-          <a class="nav-link dark" href="/logout">
-            <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
-          </a>
-        </li>
-      </ul>
+
+      <!-- 검색 버튼 -->
+      <a href="/missing-child/search" class="nav-link">
+        <i class="fas fa-search nav-icon"></i>
+        실종아동 검색
+      </a>
+
+      <!-- 게시판 버튼 -->
+      <a href="/board/list" class="nav-link">
+        <i class="fas fa-list nav-icon"></i>
+        게시판
+      </a>
     </div>
-  </header>
+
+    <!-- 오른쪽 네비게이션 -->
+    <ul class="nav-right">
+
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link" href="/login">
+          <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link dark" href="/signup">
+          <i class="fas fa-user-plus nav-icon"></i> 회원가입
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link">
+          <i class="fas fa-user nav-icon"></i>
+          <span th:text="${user.name + '님'}">이름</span>
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link" href="/mypage">
+          <i class="fas fa-home nav-icon"></i> MYPAGE
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link dark" href="/logout">
+          <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+
+
+
 
   <div class="container">
     <div class="navigation-bar">
