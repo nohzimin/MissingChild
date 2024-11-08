@@ -1,8 +1,6 @@
 package com.mycom.myapp.domain.post.service;
 
 import com.mycom.myapp.domain.post.dto.PostDto;
-import com.mycom.myapp.domain.post.dto.PostResultDto;
-import com.mycom.myapp.domain.post.entity.Post;
 
 import java.util.List;
 

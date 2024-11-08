@@ -2,6 +2,10 @@ package com.mycom.myapp.global.controller;
 
 import com.mycom.myapp.domain.admin.entity.Admin;
 import com.mycom.myapp.domain.admin.repository.AdminRepository;
+import com.mycom.myapp.domain.comment.dto.CommentDto;
+import com.mycom.myapp.domain.comment.service.CommentService;
+import com.mycom.myapp.domain.post.dto.PostDto;
+import com.mycom.myapp.domain.post.service.PostService;
 import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -9,12 +13,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 public class PageController {
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final PostService postService;
+    private final CommentService commentService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -74,40 +83,31 @@ public class PageController {
         return "index";
     }
 
-    @GetMapping("/board")
-    public String PostListPage(HttpSession session, Model model) {
+
+    // 게시글 작성
+    @GetMapping("/board/write")
+    public String PostWritePage(HttpSession session, Model model) {
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
         String email = (String) session.getAttribute("userEmail");
+        User user = userRepository.findByEmail(email);
+        model.addAttribute("user", user);
 
-        System.out.println("---------------------------");
-        System.out.println(email);
-        System.out.println("---------------------------");
-
-        if (email != null) {  // 세션에 저장된 이메일이 있을 경우
-            User user = userRepository.findByEmail(email);
-            model.addAttribute("user", user);
-        } else {
-            model.addAttribute("user", null);
-        }
-
-        return "postList";
+        return "PostWrite";
     }
 
+
+    /** 마이페이지 조회
+     *
+     * @param session
+     * @param model
+     * @return
+     */
     @GetMapping("/mypage")
     public String MyPage(HttpSession session, Model model) {
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
         String email = (String) session.getAttribute("userEmail");
-
-        System.out.println("---------------------------");
-        System.out.println(email);
-        System.out.println("---------------------------");
-
-        if (email != null) {  // 세션에 저장된 이메일이 있을 경우
-            User user = userRepository.findByEmail(email);
-            model.addAttribute("user", user);
-        } else {
-            model.addAttribute("user", null);
-        }
+        User user = userRepository.findByEmail(email);
+        model.addAttribute("user", user);
 
         return "userPage";
     }

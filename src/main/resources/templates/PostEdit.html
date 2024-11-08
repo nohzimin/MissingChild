@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 수정</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="/assets/css/header.css" rel="stylesheet">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      height: calc(100vh - 60px); /* 헤더 높이만 제외 */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .write-form {
+      flex: 1;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .title-input {
+      width: 100%;
+      font-size: 2.2rem;
+      border: none;
+      outline: none;
+      font-weight: 600;
+      color: #37352f;
+      padding: 0.5rem 0;
+    }
+
+    .title-input::placeholder {
+      color: #b3b3b3;
+    }
+
+    .title-divider {
+      width: 100%;
+      height: 1px;
+      background-color: #eee;
+      margin: 1.5rem 0;
+    }
+
+    .content-input {
+      width: 100%;
+      font-size: 1.1rem;
+      border: none;
+      outline: none;
+      flex: 1;
+      color: #37352f;
+      line-height: 1.6;
+      padding: 0.5rem 0;
+      resize: none;
+    }
+
+    .content-input::placeholder {
+      color: #b3b3b3;
+    }
+
+    .navigation-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .back-button {
+      color: #666;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .back-button:hover {
+      color: #333;
+    }
+
+    .submit-button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .submit-button:hover {
+      background-color: #444;
+    }
+
+    .button-wrapper {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  
+<header class="top-header">
+    <div class="header-container">
+      <!-- 로고와 왼쪽 네비게이션 -->
+      <div class="nav-group">
+        <a href="/" class="logo">
+          <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+        </a>
+  
+        <!-- 주요기능 드롭다운 -->
+        <div class="nav-dropdown">
+          <button class="dropdown-toggle">
+            주요기능
+            <i class="fas fa-chevron-down nav-icon"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="/missing-child/list">실종 아동 보기</a>
+            <a href="/missing-child/register">실종 아동 등록</a>
+          </div>
+        </div>
+  
+        <!-- 검색 버튼 -->
+        <a href="/missing-child/search" class="nav-link">
+          <i class="fas fa-search nav-icon"></i>
+          실종아동 검색
+        </a>
+  
+        <!-- 게시판 버튼 -->
+        <a href="/board" class="nav-link">
+          <i class="fas fa-list nav-icon"></i>
+          게시판
+        </a>
+      </div>
+  
+      <!-- 오른쪽 네비게이션 -->
+      <ul class="nav-right">
+        <li class="nav-item" th:if="${user != null}">
+          <a class="nav-link" href="/mypage">
+            <i class="fas fa-home nav-icon"></i> MYPAGE
+          </a>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link" href="/login">
+            <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
+          </a>
+        </li>
+        <li class="nav-item" th:if="${user == null}">
+          <a class="nav-link dark" href="/signup">
+            <i class="fas fa-user-plus nav-icon"></i> 회원가입
+          </a>
+        </li>
+        <li class="nav-item" th:if="${user != null}">
+          <a class="nav-link">
+            <i class="fas fa-user nav-icon"></i>
+            <span th:text="${user.name + '님'}">이름</span>
+          </a>
+        </li>
+        <li class="nav-item" th:if="${user != null}">
+          <a class="nav-link dark" href="/logout">
+            <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
+          </a>
+        </li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="navigation-bar">
+      <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        뒤로가기
+      </a>
+      <div class="button-wrapper">
+        <button class="submit-button">등록하기</button>
+      </div>
+      <div style="width: 80px;"><!-- 우측 여백 맞추기용 --></div>
+    </div>
+
+    <form class="write-form">
+      <input type="text" class="title-input" placeholder="제목을 입력하세요." required>
+      <div class="title-divider"></div>
+      <textarea class="content-input" placeholder="내용을 입력하세요." required></textarea>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

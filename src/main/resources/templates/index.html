@@ -265,6 +265,15 @@
 </script>
 
 
+    <!-- 사용자 이메일을 서버에서 받아와 세션 스토리지에 저장 -->
+    <th:block th:if="${user != null}">
+        <script>
+            const userId = /*[[${'#'}]]*/'[[${user.userId}]]';
+            sessionStorage.setItem('userId', userId);
+            console.log('Stored userId:', userId);
+        </script>
+    </th:block>
+
     <script>
 
         window.onload = async function () {

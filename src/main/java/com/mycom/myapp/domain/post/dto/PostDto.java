@@ -15,4 +15,5 @@ public class PostDto {
     private List<CommentDto> comments; // 필요 시 댓글 목록 포함
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String authorNickname; // 작성자 닉네임 추가
 }

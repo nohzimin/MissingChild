@@ -1,7 +1,6 @@
 package com.mycom.myapp.domain.post.service;
 
 import com.mycom.myapp.domain.post.dto.PostDto;
-import com.mycom.myapp.domain.post.dto.PostResultDto;
 import com.mycom.myapp.domain.post.entity.Post;
 import com.mycom.myapp.domain.post.repository.PostRepository;
 import com.mycom.myapp.domain.user.entity.User;
@@ -63,7 +62,17 @@ public class PostServiceImpl implements PostService {
     public PostDto getPostById(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
-        return convertToPostDto(post);
+
+        PostDto postDto = new PostDto();
+        postDto.setPostId(post.getPostId());
+        postDto.setTitle(post.getTitle());
+        postDto.setContent(post.getContent());
+        postDto.setUserId(post.getUser().getUserId());
+        postDto.setCreatedAt(post.getCreatedAt());
+        postDto.setUpdatedAt(post.getUpdatedAt());
+        postDto.setAuthorNickname(post.getUser().getNickName()); // 작성자 닉네임 설정
+
+        return postDto;
     }
 
     private PostDto convertToPostDto(Post post) {

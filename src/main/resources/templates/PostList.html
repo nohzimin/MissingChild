@@ -117,7 +117,8 @@
     }
   </style>
 </head>
-<body><header class="top-header">
+<body>
+<header class="top-header">
   <div class="header-container">
     <!-- 로고와 왼쪽 네비게이션 -->
     <div class="nav-group">
@@ -181,62 +182,35 @@
     </ul>
   </div>
 </header>
+
+
+
 <div class="container">
-  <h2 class="text-center mb-4">자주 묻는 질문</h2>
+  <h2 class="text-center mb-4">게시판</h2>
 
   <!-- 탭 메뉴 -->
   <div class="tab-menu">
     <a href="#" class="active">COMMUNITY</a>
     <a href="#">FAQ</a>
-    \\
   </div>
 
-  <!-- FAQ 테이블 -->
+  <!-- 게시글 테이블 -->
   <table class="faq-table">
     <thead>
     <tr>
       <th style="width: 10%">No</th>
-      <th style="width: 20%">카테고리</th>
+      <th style="width: 20%">작성자</th>
       <th style="width: 50%">제목</th>
       <th style="width: 20%">작성시간</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="faq : ${faqs}">
-      <td>6</td>
-      <td>교환반품</td>
-      <td>배송 전 변경 문의</td>
-      <td>2020-11-22</td>
-    </tr>
-    <tr>
-      <td>5</td>
-      <td>이용방법</td>
-      <td>무지화구 보관이나 보존 좋은 관리 방법</td>
-      <td>2017-11-22</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>이용방법</td>
-      <td>뮤토 배송 관련 방법</td>
-      <td>2017-11-22</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>계정</td>
-      <td>비밀번호 찾는 방법</td>
-      <td>2017-11-22</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>이용방법</td>
-      <td>LINDA 소원문 어플방법</td>
-      <td>2017-11-06</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>교환반품</td>
-      <td>환불/교환 방법</td>
-      <td>2017-11-03</td>
+    <!-- 게시글을 반복문으로 출력 -->
+    <tr th:each="post, iterStat : ${posts}">
+      <td th:text="${iterStat.count}">1</td> <!-- 순번 -->
+      <td th:text="${user.nickName}">작성자</td>
+      <td><a th:href="@{'/board/detail/' + ${post.postId}}" th:text="${post.title}">게시글 제목</a></td>
+      <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>
     </tr>
     </tbody>
   </table>
@@ -249,6 +223,7 @@
     </div>
   </div>
 </div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>

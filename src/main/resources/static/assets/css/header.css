@@ -3,16 +3,18 @@
     border-bottom: 1px solid #eee;
     padding: 15px 0;
     background: white;
+    width: 100%; /* 추가 */
 }
 
 .header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 100%; /* max-width 제거하고 width 100%로 변경 */
+    padding: 0 40px; /* 패딩 값 수정 */
 }
+
+/* 나머지 스타일은 동일하게 유지 */
 
 /* 로고 스타일 */
 .logo {
@@ -117,6 +119,16 @@
     align-items: center;
 }
 
+.nav-right .nav-link {
+    border: 1px solid #ddd; /* 기존 테두리 스타일 */
+}
+
+/* 마이페이지와 이름 표시 링크는 테두리 제거 */
+.nav-right .nav-link[href="/mypage"],
+.nav-right .nav-link:not([href]) {  /* 이름 표시는 href가 없는 링크 */
+    border: none;
+}
+
 .nav-right .nav-link.dark {
     background-color: #333;
     color: white;
@@ -139,7 +151,7 @@
     }
 
     .header-container {
-        padding: 0 15px;
+        padding: 0 20px; /* 모바일에서는 좌우 여백을 20px로 조정 */
     }
 
     .nav-right {

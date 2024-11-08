@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시글 상세</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="/assets/css/header.css" rel="stylesheet">
+  <style>
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .post-header {
+      margin-bottom: 30px;
+    }
+
+    .post-title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .post-info {
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .post-content {
+      min-height: 300px;
+      margin: 30px 0;
+      line-height: 1.6;
+      padding: 20px 0;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .comment-section {
+      margin-top: 50px;
+    }
+
+    .comment-form {
+      margin-bottom: 30px;
+    }
+
+    .comment-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .comment-list {
+      margin-top: 30px;
+    }
+
+    .comment-item {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .comment-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .comment-author {
+      font-weight: bold;
+      font-size: large;
+    }
+
+    .comment-date {
+      color: #888;
+    }
+
+    .btn-comment {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-comment:hover {
+      background-color: #555;
+    }
+
+    .post-actions {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .btn-action {
+      margin-left: 10px;
+      padding: 6px 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: white;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .btn-action:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+<header class="top-header">
+  <div class="header-container">
+    <!-- 로고와 왼쪽 네비게이션 -->
+    <div class="nav-group">
+      <a href="/" class="logo">
+        <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+      </a>
+
+      <!-- 주요기능 드롭다운 -->
+      <div class="nav-dropdown">
+        <button class="dropdown-toggle">
+          주요기능
+          <i class="fas fa-chevron-down nav-icon"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/missing-child/list">실종 아동 보기</a>
+          <a href="/missing-child/register">실종 아동 등록</a>
+        </div>
+      </div>
+
+      <!-- 검색 버튼 -->
+      <a href="/missing-child/search" class="nav-link">
+        <i class="fas fa-search nav-icon"></i>
+        실종아동 검색
+      </a>
+
+      <!-- 게시판 버튼 -->
+      <a href="/board" class="nav-link">
+        <i class="fas fa-list nav-icon"></i>
+        게시판
+      </a>
+    </div>
+
+    <!-- 오른쪽 네비게이션 -->
+    <ul class="nav-right">
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link" href="/mypage">
+          <i class="fas fa-home nav-icon"></i> MYPAGE
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link" href="/login">
+          <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link dark" href="/signup">
+          <i class="fas fa-user-plus nav-icon"></i> 회원가입
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link">
+          <i class="fas fa-user nav-icon"></i>
+          <span th:text="${user.name + '님'}">이름</span>
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link dark" href="/logout">
+          <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<div class="container">
+  <div class="post-header">
+    <h1 class="post-title" th:text="${post.title}">게시글 제목</h1>
+    <div class="post-info">
+      <span class="post-author" th:text="${post.authorNickname}">작성자 닉네임</span>
+      <span class="post-date" th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+    </div>
+  </div>
+
+  <div class="post-content" th:text="${post.content}">
+    게시글 내용이 여기에 표시됩니다.
+  </div>
+
+  <div class="post-actions">
+    <a href="/board/list" class="btn-action">목록</a>
+    <a th:if="${user != null && user.userId == post.userId}" th:href="@{'/board/edit/' + ${post.postId}}" class="btn-action">수정</a>
+    <button th:if="${user != null && user.userId == post.userId}" class="btn-action" onclick="deletePost([[${post.postId}]])">삭제</button>
+  </div>
+
+  <div class="comment-section">
+    <h3>댓글</h3>
+    <div class="comment-form">
+      <textarea class="comment-input" placeholder="댓글을 입력하세요..." th:if="${user != null}"></textarea>
+      <div th:if="${user == null}" class="alert alert-info">댓글을 작성하려면 로그인이 필요합니다.</div>
+      <!-- 버튼에 data-post-id 속성 추가 -->
+      <button class="btn-comment" th:if="${user != null}" data-post-id="[[${post.postId}]]">
+        댓글 등록
+      </button>
+    </div>
+
+    <div class="comment-list">
+      <div class="comment-item" th:each="comment : ${comments}">
+        <div class="comment-info">
+          <span class="comment-author" th:text="${comment.authorNickname}">댓글 작성자</span>
+          <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">2024-01-01 12:00</span>
+        </div>
+        <div class="comment-content" th:text="${comment.commentContent}">
+          댓글 내용이 여기에 표시됩니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  window.onload = function() {
+    // 페이지 로드 후 sessionStorage에서 userId 가져오기
+    const getUserId = sessionStorage.getItem('userId');
+    console.log(getUserId); // userId를 콘솔에 출력
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const commentButton = document.querySelector(".btn-comment");
+    if (commentButton) {
+      commentButton.addEventListener("click", function () {
+        // 버튼의 data-post-id 속성에서 postId 가져오기
+        const postId = this.getAttribute("data-post-id");
+        createComment(postId); // createComment 함수 호출
+      });
+    }
+  });
+
+  function deletePost(postId) {
+    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      axios.post(`/board/delete/${postId}`)
+              .then(() => {
+                alert('게시글이 삭제되었습니다.');
+                window.location.href = '/board/list';
+              })
+              .catch(error => console.error('Error deleting post:', error));
+    }
+  }
+
+  function createComment(postId) {
+    const commentContent = document.querySelector('.comment-input').value;
+    const getUserId = sessionStorage.getItem('userId');
+    if (!getUserId) {
+      alert("댓글을 작성하려면 로그인이 필요합니다.");
+      return;
+    }
+    axios.post('/api/comments', {
+      commentContent: commentContent,
+      postId: postId,
+      userId: getUserId
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(response => {
+              const commentList = document.querySelector('.comment-list');
+              const newComment = response.data;
+              const commentItem = document.createElement('div');
+              commentItem.classList.add('comment-item');
+              commentItem.innerHTML = `
+      <div class="comment-info">
+        <span class="comment-author">${newComment.authorNickname}</span>
+        <span class="comment-date">${new Date(newComment.createdAt).toLocaleString()}</span>
+      </div>
+      <div class="comment-content">${newComment.commentContent}</div>
+    `;
+              commentList.appendChild(commentItem);
+              document.querySelector('.comment-input').value = ''; // 댓글 입력 필드 초기화
+            })
+            .catch(error => console.error('Error creating comment:', error));
+  }
+</script>
+</body>
+</html>

@@ -55,10 +55,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getCommentsByPostId(Long postId) {
-        return commentRepository.findAll().stream()
-                .filter(comment -> comment.getPost().getPostId().equals(postId))
-                .map(this::convertToCommentDto)
-                .collect(Collectors.toList());
+        List<Comment> comments = commentRepository.findByPost_PostId(postId);
+        return comments.stream().map(comment -> {
+            CommentDto commentDto = new CommentDto();
+            commentDto.setCommentId(comment.getCommentId());
+            commentDto.setCommentContent(comment.getCommentContent());
+            commentDto.setUserId(comment.getUser().getUserId());
+            commentDto.setPostId(comment.getPost().getPostId());
+            commentDto.setCreatedAt(comment.getCreatedAt());
+            commentDto.setUpdatedAt(comment.getUpdatedAt());
+            commentDto.setAuthorNickname(comment.getUser().getNickName()); // 댓글 작성자 닉네임 설정
+            return commentDto;
+        }).collect(Collectors.toList());
     }
 
     private CommentDto convertToCommentDto(Comment comment) {

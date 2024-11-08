@@ -12,4 +12,5 @@ public class CommentDto {
     private Long postId; // Post ID만 포함
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String authorNickname; // 댓글 작성자 닉네임 추가
 }
