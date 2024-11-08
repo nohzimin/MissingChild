@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>게시판</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="/assets/css/header.css" rel="stylesheet">  <!-- 헤더 CSS 추가 -->
+  <style>
+    /* 전체 컨테이너 스타일 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* 탭 메뉴 스타일 */
+    .tab-menu {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .tab-menu a {
+      padding: 10px 20px;
+      color: #666;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .tab-menu a.active {
+      color: #000;
+      border-bottom: 2px solid #000;
+    }
+
+    /* 테이블 스타일 */
+    .faq-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .faq-table th {
+      padding: 15px;
+      border-top: 2px solid #000;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-weight: normal;
+      color: #666;
+    }
+
+    .faq-table td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .faq-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    /* 검색창 스타일 */
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .search-box {
+      position: relative;
+      width: 300px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 40px 8px 15px;
+      border: 1px solid #ddd;
+      border-radius: 20px;
+    }
+
+    .search-button {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      padding: 5px 15px;
+      cursor: pointer;
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 10px;
+      }
+
+      .tab-menu {
+        margin-bottom: 20px;
+      }
+
+      .tab-menu a {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+
+      .faq-table th,
+      .faq-table td {
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      .search-box {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="top-header">
+  <div class="header-container">
+    <!-- 로고와 왼쪽 네비게이션 -->
+    <div class="nav-group">
+      <a href="/" class="logo">
+        <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+      </a>
+
+      <!-- 주요기능 드롭다운 -->
+      <div class="nav-dropdown">
+        <button class="dropdown-toggle">
+          주요기능
+          <i class="fas fa-chevron-down nav-icon"></i>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/missing-child/list">실종 아동 보기</a>
+          <a href="/missing-child/register">실종 아동 등록</a>
+        </div>
+      </div>
+
+      <!-- 검색 버튼 -->
+      <a href="/missing-child/search" class="nav-link">
+        <i class="fas fa-search nav-icon"></i>
+        실종아동 검색
+      </a>
+
+      <!-- 게시판 버튼 -->
+      <a href="/board" class="nav-link">
+        <i class="fas fa-list nav-icon"></i>
+        게시판
+      </a>
+    </div>
+
+    <!-- 오른쪽 네비게이션 -->
+    <ul class="nav-right">
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link" href="/mypage">
+          <i class="fas fa-home nav-icon"></i> MYPAGE
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link" href="/login">
+          <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user == null}">
+        <a class="nav-link dark" href="/signup">
+          <i class="fas fa-user-plus nav-icon"></i> 회원가입
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link">
+          <i class="fas fa-user nav-icon"></i>
+          <span th:text="${user.name + '님'}">이름</span>
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link dark" href="/logout">
+          <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+
+
+<div class="container">
+  <h2 class="text-center mb-4">게시판</h2>
+
+  <!-- 탭 메뉴 -->
+  <div class="tab-menu">
+    <a href="#" class="active">COMMUNITY</a>
+    <a href="#">FAQ</a>
+  </div>
+
+  <!-- 게시글 테이블 -->
+  <table class="faq-table">
+    <thead>
+    <tr>
+      <th style="width: 10%">No</th>
+      <th style="width: 20%">작성자</th>
+      <th style="width: 50%">제목</th>
+      <th style="width: 20%">작성시간</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 게시글을 반복문으로 출력 -->
+    <tr th:each="post, iterStat : ${posts}">
+      <td th:text="${iterStat.count}">1</td> <!-- 순번 -->
+      <td th:text="${user.nickName}">작성자</td>
+      <td><a th:href="@{'/board/detail/' + ${post.postId}}" th:text="${post.title}">게시글 제목</a></td>
+      <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 검색창 -->
+  <div class="search-container">
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Search">
+      <button class="search-button">검색</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

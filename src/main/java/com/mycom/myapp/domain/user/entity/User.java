@@ -1,6 +1,8 @@
 package com.mycom.myapp.domain.user.entity;
 
 import com.mycom.myapp.domain.child.entity.MissingChild;
+import com.mycom.myapp.domain.comment.entity.Comment;
+import com.mycom.myapp.domain.post.entity.Post;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -27,6 +29,9 @@ public class User {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "nick_name")
+    private String nickName;
+
     @Column(name = "phone")
     private String phone;
 
@@ -42,6 +47,12 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<MissingChild> missingChildList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Post> postList;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<Comment> commentList;
 
     // Getters and Setters
 }
