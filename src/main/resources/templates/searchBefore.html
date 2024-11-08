@@ -5,244 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>실종 아동 검색 결과</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/css/header.css">
-
   <style>
     body {
-      background-color: #f5f8fa; /* 부드러운 배경색 */
+      font-family: 'Inter', sans-serif;
     }
-
-
     .search-container {
-      background-color: #ffffff;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
+      background-color: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      border-radius: 0.5rem;
       padding: 2rem;
-      width: 60%;
-      max-width: 800px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 2rem auto;
+      margin-bottom: 2rem;
     }
-
-    .image-search-label, .info-search-label {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #333333;
-      text-align: center;
-    }
-
-    .image-search-container, .info-search-container {
-      width: 100%;
-      margin-bottom: 1.5rem;
-    }
-
     #imagePreview {
       width: 100%;
       height: 200px;
-      border: 1px solid #dcdcdc;
-      border-radius: 10px;
+      border: 1px solid #e5e5e5;
+      border-radius: 0.25rem;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #f2f5f8;
+      overflow: hidden;
     }
-
     #imagePreview img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
     }
-
-    .form-group {
-      width: 100%;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      font-weight: 600;
-      color: #555555;
-    }
-
-    .form-check-label {
-      margin-left: 5px;
-      color: #555555;
-    }
-
-    .btn-custom {
-      font-size: 1.1rem;
-      padding: 0.6rem 2rem;
-      background-color: #212121;
-      color: #ffffff;
-      border: none;
-      border-radius: 20px;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 12px rgba(239, 237, 237, 0.1);
-    }
-
-    .btn-custom:hover {
-      background-color: #ffffffea;
-      color: #000000;
-      box-shadow: 0 4px 12px rgba(239, 237, 237, 0.1);
-    }
-
-    .text-center.mt-4 {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-    }
-
-    .no-results {
-      border: 1px solid #e5e5e5;
-      border-radius: 10px;
-      background-color: #fafafa;
-      padding: 1rem;
-      text-align: center;
-      color: #666666;
-    }
-
     .result-card {
       width: 200px;
       margin: 10px;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
     }
-
     .result-card img {
       height: 150px;
-      width: 100%;
-      border-radius: 10px 10px 0 0;
       object-fit: cover;
+    }
+    .image-search-label {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #000000;
+    }
+    .info-search-label {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      margin-top: 3rem;
+      color: #000000;
+    }
+    .search-btn {
+      font-size: 1.2rem;
+      padding: 0.5rem 2rem;
+      background-color: #212121;
+      border-color: #ffddee;
+    }
+    .search-btn:hover {
+      background-color: #7b7b7b;
+      border-color: #ffddee;
+    }
+    .image-search-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      flex-grow: 1; /* 추가: 두 개의 섹션이 같은 높이를 갖도록 설정 */
+    }
+    .no-results {
+      border: 1px solid #e5e5e5;
+      border-radius: 0.5rem;
+      background-color: #f9f9f9;
+      padding: 1rem;
+      text-align: center;
     }
 
     .progress {
       height: 20px;
-      border-radius: 10px;
     }
-
     .progress-bar {
-      background-color: #28a745;
+      background-color: #4CAF50;
     }
-
   </style>
 </head>
 <body>
-<header class="top-header">
-  <div class="header-container">
-    <!-- 로고와 왼쪽 네비게이션 -->
-    <div class="nav-group">
-      <a href="/" class="logo">
-        <img src="/assets/img/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
-      </a>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">장기 실종 아동 찾기</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
 
-      <!-- 주요기능 드롭다운 -->
-      <div class="nav-dropdown">
-        <button class="dropdown-toggle">
-          주요기능
-          <i class="fas fa-chevron-down nav-icon"></i>
-        </button>
-        <div class="dropdown-menu">
-          <a href="/missing-child/list">실종 아동 보기</a>
-          <a href="/missing-child/register">실종 아동 등록</a>
-        </div>
+          <li class="nav-item">
+            <a class="nav-link" href="/missing-child/list">실종 아동 보기</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/missing-child/search">실종 아동 검색</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/missing-child/register">실종 아동 등록</a>
+          </li>
+          <li class="nav-item" th:if="${user == null}">
+            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt"></i> 로그인</a>
+          </li>
+          <li class="nav-item" th:if="${user == null}">
+            <a class="nav-link" href="/signup"><i class="fas fa-user-plus"></i> 회원가입</a>
+          </li>
+          <li class="nav-item" th:if="${user != null}">
+            <a class="nav-link" th:text="${user.name + '님'}"><i class="fas fa-user-plus"></i></a>
+          </li>
+          <li class="nav-item" th:if="${user != null}">
+            <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> 로그아웃</a>
+          </li>
+        </ul>
       </div>
-
-      <!-- 검색 버튼 -->
-      <a href="/missing-child/search" class="nav-link">
-        <i class="fas fa-search nav-icon"></i>
-        실종아동 검색
-      </a>
-
-      <!-- 게시판 버튼 -->
-      <a href="/board/list" class="nav-link">
-        <i class="fas fa-list nav-icon"></i>
-        게시판
-      </a>
     </div>
-
-    <!-- 오른쪽 네비게이션 -->
-    <ul class="nav-right">
-
-      <li class="nav-item" th:if="${user == null}">
-        <a class="nav-link" href="/login">
-          <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
-        </a>
-      </li>
-      <li class="nav-item" th:if="${user == null}">
-        <a class="nav-link dark" href="/signup">
-          <i class="fas fa-user-plus nav-icon"></i> 회원가입
-        </a>
-      </li>
-      <li class="nav-item" th:if="${user != null}">
-        <a class="nav-link">
-          <i class="fas fa-user nav-icon"></i>
-          <span th:text="${user.name + '님'}">이름</span>
-        </a>
-      </li>
-      <li class="nav-item" th:if="${user != null}">
-        <a class="nav-link" href="/mypage">
-          <i class="fas fa-home nav-icon"></i> MYPAGE
-        </a>
-      </li>
-      <li class="nav-item" th:if="${user != null}">
-        <a class="nav-link dark" href="/logout">
-          <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
-        </a>
-      </li>
-    </ul>
-  </div>
+    </div>
+  </nav>
 </header>
 
-
-
-
 <div class="search-container">
-  <form id="searchForm" class="w-100">
-    <h2 class="info-search-label text-center mb-4">실종아동 검색하기</h2>
-    <div class="image-search-container">
-      <div id="imagePreview" class="mb-3"></div>
-      <input type="file" id="photo" name="photo" accept="image/*" class="form-control">
-      <div id="label-container" style="width:100%; margin-top: 20px;"></div>
-    </div>
-    <div class="form-group">
-      <label for="name" class="form-label">이름</label>
-      <input type="text" id="name" name="name" class="form-control">
-    </div>
-    <div class="form-group">
-      <label class="form-label">성별</label>
-      <div class="d-flex">
-        <div class="form-check me-3">
-          <input type="radio" id="genderMale" name="gender" value="M" class="form-check-input">
-          <label for="genderMale" class="form-check-label">남자</label>
+  <form id="searchForm">
+    <div class="row">
+      <div class="col-md-6 mb-5">
+        <div class="image-search-container">
+          <h2 class="image-search-label">이미지로 검색하기</h2>
+          <div id="imagePreview" class="mb-3"></div>
+          <input type="file" id="photo" name="photo" accept="image/*" class="form-control">
+          <!-- 파일 선택 바로 아래에 예측 결과 표시 -->
+          <div id="label-container" style="width:100%; margin-top: 20px;"></div>
         </div>
-        <div class="form-check">
-          <input type="radio" id="genderFemale" name="gender" value="F" class="form-check-input">
-          <label for="genderFemale" class="form-check-label">여자</label>
+      </div>
+      <div class="col-md-6">
+        <h2 class="info-search-label mt-5"> 인적사항으로 검색하기</h2>
+        <div class="form-group mb-3">
+          <label for="name" class="form-label">이름</label>
+          <input type="text" id="name" name="name" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+          <label class="form-label">성별</label>
+          <div class="form-check">
+            <input type="radio" id="genderMale" name="gender" value="M" class="form-check-input">
+            <label for="genderMale" class="form-check-label">남자</label>
+          </div>
+          <div class="form-check">
+            <input type="radio" id="genderFemale" name="gender" value="F" class="form-check-input">
+            <label for="genderFemale" class="form-check-label">여자</label>
+          </div>
+        </div>
+        <div class="form-group mb-3">
+          <label for="age" class="form-label">나이</label>
+          <input type="number" id="age" name="age" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+          <label for="location" class="form-label">실종장소</label>
+          <input type="text" id="location" name="location" class="form-control">
+        </div>
+        <div class="form-group mb-3">
+          <label for="date" class="form-label">실종일자</label>
+          <input type="date" id="date" name="date" class="form-control">
         </div>
       </div>
     </div>
-    <div class="form-group">
-      <label for="age" class="form-label">나이</label>
-      <input type="number" id="age" name="age" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="location" class="form-label">실종장소</label>
-      <input type="text" id="location" name="location" class="form-control">
-    </div>
-    <div class="form-group">
-      <label for="date" class="form-label">실종일자</label>
-      <input type="date" id="date" name="date" class="form-control">
-    </div>
     <div class="text-center mt-4">
-      <button type="button" id="resetBtn" class="btn btn-custom">초기화</button>
-      <button type="submit" class="btn btn-custom">인적사항 검색</button>
+      <button type="button" id="resetBtn" class="btn btn-primary search-btn">초기화</button>
+      <button type="submit" class="btn btn-primary search-btn"> 인적사항 검색</button>
     </div>
-
   </form>
 </div>
 

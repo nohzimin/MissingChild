@@ -104,7 +104,7 @@ public class PageController {
      */
     @GetMapping("/mypage")
     public String MyPage(HttpSession session, Model model) {
-        // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
+        // 세션에서 사용자 이메일 가져옴
         String email = (String) session.getAttribute("userEmail");
         User user = userRepository.findByEmail(email);
         model.addAttribute("user", user);

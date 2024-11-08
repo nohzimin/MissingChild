@@ -123,7 +123,7 @@
     <!-- 로고와 왼쪽 네비게이션 -->
     <div class="nav-group">
       <a href="/" class="logo">
-        <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+        <img src="/assets/img/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
       </a>
 
       <!-- 주요기능 드롭다운 -->
@@ -145,7 +145,7 @@
       </a>
 
       <!-- 게시판 버튼 -->
-      <a href="/board" class="nav-link">
+      <a href="/board/list" class="nav-link">
         <i class="fas fa-list nav-icon"></i>
         게시판
       </a>
@@ -153,11 +153,7 @@
 
     <!-- 오른쪽 네비게이션 -->
     <ul class="nav-right">
-      <li class="nav-item" th:if="${user != null}">
-        <a class="nav-link" href="/mypage">
-          <i class="fas fa-home nav-icon"></i> MYPAGE
-        </a>
-      </li>
+
       <li class="nav-item" th:if="${user == null}">
         <a class="nav-link" href="/login">
           <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
@@ -172,6 +168,11 @@
         <a class="nav-link">
           <i class="fas fa-user nav-icon"></i>
           <span th:text="${user.name + '님'}">이름</span>
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link" href="/mypage">
+          <i class="fas fa-home nav-icon"></i> MYPAGE
         </a>
       </li>
       <li class="nav-item" th:if="${user != null}">
@@ -208,7 +209,7 @@
     <!-- 게시글을 반복문으로 출력 -->
     <tr th:each="post, iterStat : ${posts}">
       <td th:text="${iterStat.count}">1</td> <!-- 순번 -->
-      <td th:text="${user.nickName}">작성자</td>
+      <td th:text="${post.authorNickname}">작성자</td>
       <td><a th:href="@{'/board/detail/' + ${post.postId}}" th:text="${post.title}">게시글 제목</a></td>
       <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>
     </tr>

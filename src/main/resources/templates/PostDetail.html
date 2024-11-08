@@ -122,7 +122,7 @@
     <!-- 로고와 왼쪽 네비게이션 -->
     <div class="nav-group">
       <a href="/" class="logo">
-        <img src="/images/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
+        <img src="/assets/img/logo.png" alt="장기 실종 아동 찾기" class="logo-image">
       </a>
 
       <!-- 주요기능 드롭다운 -->
@@ -144,7 +144,7 @@
       </a>
 
       <!-- 게시판 버튼 -->
-      <a href="/board" class="nav-link">
+      <a href="/board/list" class="nav-link">
         <i class="fas fa-list nav-icon"></i>
         게시판
       </a>
@@ -152,11 +152,7 @@
 
     <!-- 오른쪽 네비게이션 -->
     <ul class="nav-right">
-      <li class="nav-item" th:if="${user != null}">
-        <a class="nav-link" href="/mypage">
-          <i class="fas fa-home nav-icon"></i> MYPAGE
-        </a>
-      </li>
+
       <li class="nav-item" th:if="${user == null}">
         <a class="nav-link" href="/login">
           <i class="fas fa-sign-in-alt nav-icon"></i> 로그인
@@ -174,6 +170,11 @@
         </a>
       </li>
       <li class="nav-item" th:if="${user != null}">
+        <a class="nav-link" href="/mypage">
+          <i class="fas fa-home nav-icon"></i> MYPAGE
+        </a>
+      </li>
+      <li class="nav-item" th:if="${user != null}">
         <a class="nav-link dark" href="/logout">
           <i class="fas fa-sign-out-alt nav-icon"></i> 로그아웃
         </a>
@@ -181,6 +182,9 @@
     </ul>
   </div>
 </header>
+
+
+
 
 <div class="container">
   <div class="post-header">
