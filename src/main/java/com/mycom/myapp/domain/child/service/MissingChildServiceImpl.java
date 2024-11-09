@@ -8,6 +8,8 @@ import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,7 +25,6 @@ public class MissingChildServiceImpl implements MissingChildService {
 
     private final MissingChildRepository missingChildRepository;
     private final UserRepository userRepository;
-//    private final ReportRepository reportRepository;
 
 
     @Override
@@ -57,6 +58,26 @@ public class MissingChildServiceImpl implements MissingChildService {
         missingChildResultDto.setResult("success");
 
         return missingChildResultDto;
+    }
+
+    // 모든 missingChild pagenation 해서 가져오기
+    @Override
+    public Page<MissingChildDto> getAllMissingChild(Pageable pageable) {
+        Page<MissingChild> missingChildPage = missingChildRepository.findAll(pageable);
+
+        return missingChildPage.map(child -> {
+            MissingChildDto missingChildDto = new MissingChildDto();
+            missingChildDto.setChildId(child.getChildId());
+            missingChildDto.setChildName(child.getChildName());
+            missingChildDto.setDateOfBirth(child.getDateOfBirth());
+            missingChildDto.setChildGender(child.getChildGender());
+            missingChildDto.setChildAge(child.getChildAge());
+            missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
+            missingChildDto.setMissingSince(child.getMissingSince());
+            missingChildDto.setPhotoUrl(child.getPhotoUrl());
+            missingChildDto.setUserId(child.getUser().getUserId());
+            return missingChildDto;
+        });
     }
 
     @Override

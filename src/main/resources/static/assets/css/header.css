@@ -101,7 +101,7 @@
 
 .dropdown-menu a:hover {
     background-color: #f8f9fa;
-    transform: translateX(5px);
+    transform: translateX(0.5px);
 }
 
 .nav-link {

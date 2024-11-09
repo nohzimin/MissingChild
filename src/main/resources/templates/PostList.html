@@ -238,6 +238,184 @@
       color: #666;
       font-style: italic;
     }
+
+    /* 페이지네이션 컨테이너 스타일 */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background-color: #ffffff;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .pagination .page-item {
+      list-style: none;
+    }
+
+    .pagination .page-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      margin: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      color: #333;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    /* 현재 페이지 스타일 */
+    .pagination .page-item.active .page-link {
+      background-color: #333;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 이전/다음 버튼 스타일 */
+    .pagination .page-item:first-child .page-link,
+    .pagination .page-item:last-child .page-link {
+      width: auto;
+      padding: 0 1.2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      background-color: #f8f9fa;
+    }
+
+    /* 호버 효과 */
+    .pagination .page-link:hover:not(.disabled) {
+      background-color: #333;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 비활성화된 페이지 스타일 */
+    .pagination .page-item.disabled .page-link {
+      background-color: #f8f9fa;
+      color: #ccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    /* 페이지 번호 표시 제한 */
+    @media (max-width: 768px) {
+      .pagination .page-link {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+      }
+
+      .pagination {
+        gap: 0.3rem;
+      }
+    }
+
+    /* 페이지네이션 애니메이션 */
+    .pagination .page-link {
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+
+    /*검색창*/
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .search-box {
+      width: 600px;
+      position: relative;
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: white;
+      border: 2px solid #dee2e6;
+      border-radius: 25px;
+      padding: 4px;
+    }
+
+    .search-category {
+      width: 100px;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 8px 12px;
+      font-size: 1rem;
+      outline: none;
+      background: transparent;
+    }
+
+    .search-button {
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-button:hover {
+      background: #1a1a1a;
+      transform: scale(1.05);
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      .search-box {
+        width: 90%;
+      }
+
+      .search-category {
+        width: 80px;
+        font-size: 14px;
+      }
+
+      .search-input {
+        font-size: 14px;
+      }
+
+      .search-button {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -327,15 +505,15 @@
     <thead>
     <tr>
       <th style="width: 10%">No</th>
-      <th style="width: 20%">작성자</th>
-      <th style="width: 50%">제목</th>
+      <th style="width: 15%">작성자</th>
+      <th style="width: 45%">제목</th>
       <th style="width: 20%">작성시간</th>
+      <th style="width: 10%">댓글</th>
     </tr>
     </thead>
     <tbody>
-    <!-- 게시글을 반복문으로 출력, 번호는 전체 개수에서 역순으로 계산 -->
-    <tr th:each="post, iterStat : ${posts}">
-      <td th:text="${posts.size() - iterStat.index}">1</td> <!-- 번호를 역순으로 표시 -->
+    <tr th:each="post, iterStat : ${postsPage.content}">
+      <td th:text="${postsPage.totalElements - (postsPage.number * postsPage.size) - iterStat.index}">1</td>
       <td th:text="${post.authorNickname}">작성자</td>
       <td>
         <a th:href="@{'/board/detail/' + ${post.postId}}"
@@ -343,25 +521,71 @@
            style="text-decoration: none; color: #333;">게시글 제목</a>
       </td>
       <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>
+      <td th:text="${post.commentCount}">0</td>
     </tr>
-    <!-- 게시글이 없을 경우 메시지 표시 -->
-    <tr th:if="${#lists.isEmpty(posts)}">
-      <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>
+    <tr th:if="${#lists.isEmpty(postsPage.content)}">
+      <td colspan="5" class="text-center">등록된 게시글이 없습니다.</td>
     </tr>
     </tbody>
   </table>
 
+  <!--페이지 네이션-->
+  <div class="pagination-container">
+    <ul class="pagination">
+      <!-- 이전 버튼 -->
+      <li th:classappend="${postsPage.hasPrevious()} ? 'page-item' : 'page-item disabled'">
+        <a class="page-link" th:href="@{/board/list(page=${postsPage.number - 1})}">이전</a>
+      </li>
+
+      <!-- 페이지 번호 -->
+      <li th:each="i : ${#numbers.sequence(0, postsPage.totalPages - 1)}"
+          th:if="${i >= postsPage.number - 2 and i <= postsPage.number + 2}"
+          th:classappend="${postsPage.number == i} ? 'page-item active' : 'page-item'">
+        <a class="page-link" th:href="@{/board/list(page=${i})}" th:text="${i + 1}">1</a>
+      </li>
+
+      <!-- 다음 버튼 -->
+      <li th:classappend="${postsPage.hasNext()} ? 'page-item' : 'page-item disabled'">
+        <a class="page-link" th:href="@{/board/list(page=${postsPage.number + 1})}">다음</a>
+      </li>
+    </ul>
+  </div>
+
+
   <!-- 검색창 -->
   <div class="search-container">
     <div class="search-box">
-      <input type="text" class="search-input" placeholder="Search">
-      <button class="search-button">검색</button>
+      <div class="search-wrapper">
+        <select class="search-category" id="searchCategory" name="searchCategory">
+          <option value="title" th:selected="${searchCategory == 'title'}">제목</option>
+          <option value="author" th:selected="${searchCategory == 'author'}">작성자</option>
+        </select>
+        <input type="text" class="search-input" id="searchKeyword" name="searchKeyword"
+               th:value="${searchKeyword}" placeholder="검색어를 입력하세요">
+        <button class="search-button" onclick="search()">검색</button>
+      </div>
     </div>
   </div>
+
 </div>
 
 <script src="/assets/js/header.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  function search() {
+    const searchCategory = document.getElementById('searchCategory').value;
+    const searchKeyword = document.getElementById('searchKeyword').value;
+
+    window.location.href = `/board/list?searchCategory=${searchCategory}&searchKeyword=${searchKeyword}`;
+  }
+
+  // Enter 키 이벤트 처리
+  document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      search();
+    }
+  });
+</script>
 
 </body>
 </html>
