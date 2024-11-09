@@ -23,7 +23,6 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findById(postDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         Post post = new Post();
-        post.setPostId(postDto.getPostId());
         post.setTitle(postDto.getTitle());
         post.setContent(postDto.getContent());
         post.setCreatedAt(LocalDateTime.now());
@@ -54,6 +53,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDto> getAllPosts() {
         return postRepository.findAll().stream()
+                .map(this::convertToPostDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostDto> getAllPostsOrderByCreatedAtDesc() {
+        List<Post> posts = postRepository.findAllOrderByCreatedAtDesc();
+        return posts.stream()
                 .map(this::convertToPostDto)
                 .collect(Collectors.toList());
     }

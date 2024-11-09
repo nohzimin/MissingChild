@@ -2,6 +2,9 @@ package com.mycom.myapp.global.controller;
 
 import com.mycom.myapp.domain.admin.entity.Admin;
 import com.mycom.myapp.domain.admin.repository.AdminRepository;
+import com.mycom.myapp.domain.child.dto.MissingChildDto;
+import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
+import com.mycom.myapp.domain.child.service.MissingChildService;
 import com.mycom.myapp.domain.comment.dto.CommentDto;
 import com.mycom.myapp.domain.comment.service.CommentService;
 import com.mycom.myapp.domain.post.dto.PostDto;
@@ -22,6 +25,7 @@ import java.util.List;
 public class PageController {
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final MissingChildService missingChildService;
     private final PostService postService;
     private final CommentService commentService;
 
@@ -59,7 +63,11 @@ public class PageController {
         System.out.println("adminEmail---------------------------");
 
         Admin admin = adminRepository.findByAdminEmail(adminEmail);
+        MissingChildResultDto missingChildResultDto = missingChildService.getAllMissingChild();
+        List<MissingChildDto> missingChildDtoList = missingChildResultDto.getMissingChildDtoList();
+
         model.addAttribute("admin", admin);
+        model.addAttribute("missingChildren", missingChildDtoList);
 
         return "admin";
     }
@@ -95,22 +103,6 @@ public class PageController {
         return "PostWrite";
     }
 
-
-    /** 마이페이지 조회
-     *
-     * @param session
-     * @param model
-     * @return
-     */
-    @GetMapping("/mypage")
-    public String MyPage(HttpSession session, Model model) {
-        // 세션에서 사용자 이메일 가져옴
-        String email = (String) session.getAttribute("userEmail");
-        User user = userRepository.findByEmail(email);
-        model.addAttribute("user", user);
-
-        return "userPage";
-    }
 
     @GetMapping("/missing-child/list")
     public String AllMissingChildListPage(HttpSession session, Model model) {
@@ -150,6 +142,19 @@ public class PageController {
 
         return "search";
     }
+
+//    @GetMapping("/admin/missing-child/list")
+//    public String adminMissingChildListPage(HttpSession session, Model model) {
+//        // 세션에서 관리자 이메일 가져옴
+//        String adminEmail = (String) session.getAttribute("adminEmail");
+//        System.out.println(adminEmail);
+//
+//        Admin admin = adminRepository.findByAdminEmail(adminEmail);
+//        model.addAttribute("admin", admin);
+//
+//
+//        return "admin";
+//    }
 
 
 

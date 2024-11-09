@@ -19,7 +19,8 @@ public class MissingChildDto {
     private String lastKnownLocation;
     private LocalDate missingSince;
     private String photoUrl;
-
-//    private List<ReportDto> reportDtoList = new ArrayList<>();
+    private Long userId;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
 }
