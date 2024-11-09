@@ -338,6 +338,84 @@
         transform: scale(1);
       }
     }
+
+
+    /*검색창*/
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .search-box {
+      width: 600px;
+      position: relative;
+    }
+
+    .search-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: white;
+      border: 2px solid #dee2e6;
+      border-radius: 25px;
+      padding: 4px;
+    }
+
+    .search-category {
+      width: 100px;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 8px 12px;
+      font-size: 1rem;
+      outline: none;
+      background: transparent;
+    }
+
+    .search-button {
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-button:hover {
+      background: #1a1a1a;
+      transform: scale(1.05);
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      .search-box {
+        width: 90%;
+      }
+
+      .search-category {
+        width: 80px;
+        font-size: 14px;
+      }
+
+      .search-input {
+        font-size: 14px;
+      }
+
+      .search-button {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -427,32 +505,14 @@
     <thead>
     <tr>
       <th style="width: 10%">No</th>
-      <th style="width: 20%">작성자</th>
-      <th style="width: 50%">제목</th>
+      <th style="width: 15%">작성자</th>
+      <th style="width: 45%">제목</th>
       <th style="width: 20%">작성시간</th>
+      <th style="width: 10%">댓글</th>
     </tr>
     </thead>
-<!--    <tbody>-->
-<!--    &lt;!&ndash; 게시글을 반복문으로 출력, 번호는 전체 개수에서 역순으로 계산 &ndash;&gt;-->
-<!--    <tr th:each="post, iterStat : ${posts}">-->
-<!--      <td th:text="${posts.size() - iterStat.index}">1</td> &lt;!&ndash; 번호를 역순으로 표시 &ndash;&gt;-->
-<!--      <td th:text="${post.authorNickname}">작성자</td>-->
-<!--      <td>-->
-<!--        <a th:href="@{'/board/detail/' + ${post.postId}}"-->
-<!--           th:text="${post.title}"-->
-<!--           style="text-decoration: none; color: #333;">게시글 제목</a>-->
-<!--      </td>-->
-<!--      <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>-->
-<!--    </tr>-->
-<!--    &lt;!&ndash; 게시글이 없을 경우 메시지 표시 &ndash;&gt;-->
-<!--    <tr th:if="${#lists.isEmpty(posts)}">-->
-<!--      <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>-->
-<!--    </tr>-->
-<!--    </tbody>-->
     <tbody>
-    <!-- 게시글을 반복문으로 출력, 번호는 전체 개수에서 역순으로 계산 -->
     <tr th:each="post, iterStat : ${postsPage.content}">
-      <!-- 현재 페이지의 게시글 번호를 역순으로 계산하여 표시 -->
       <td th:text="${postsPage.totalElements - (postsPage.number * postsPage.size) - iterStat.index}">1</td>
       <td th:text="${post.authorNickname}">작성자</td>
       <td>
@@ -461,10 +521,10 @@
            style="text-decoration: none; color: #333;">게시글 제목</a>
       </td>
       <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성 시간</td>
+      <td th:text="${post.commentCount}">0</td>
     </tr>
-    <!-- 게시글이 없을 경우 메시지 표시 -->
     <tr th:if="${#lists.isEmpty(postsPage.content)}">
-      <td colspan="4" class="text-center">등록된 게시글이 없습니다.</td>
+      <td colspan="5" class="text-center">등록된 게시글이 없습니다.</td>
     </tr>
     </tbody>
   </table>
@@ -495,14 +555,37 @@
   <!-- 검색창 -->
   <div class="search-container">
     <div class="search-box">
-      <input type="text" class="search-input" placeholder="Search">
-      <button class="search-button">검색</button>
+      <div class="search-wrapper">
+        <select class="search-category" id="searchCategory" name="searchCategory">
+          <option value="title" th:selected="${searchCategory == 'title'}">제목</option>
+          <option value="author" th:selected="${searchCategory == 'author'}">작성자</option>
+        </select>
+        <input type="text" class="search-input" id="searchKeyword" name="searchKeyword"
+               th:value="${searchKeyword}" placeholder="검색어를 입력하세요">
+        <button class="search-button" onclick="search()">검색</button>
+      </div>
     </div>
   </div>
+
 </div>
 
 <script src="/assets/js/header.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  function search() {
+    const searchCategory = document.getElementById('searchCategory').value;
+    const searchKeyword = document.getElementById('searchKeyword').value;
+
+    window.location.href = `/board/list?searchCategory=${searchCategory}&searchKeyword=${searchKeyword}`;
+  }
+
+  // Enter 키 이벤트 처리
+  document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      search();
+    }
+  });
+</script>
 
 </body>
 </html>

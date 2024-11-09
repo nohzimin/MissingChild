@@ -14,4 +14,5 @@ public interface PostService {
     List<PostDto> getAllPostsOrderByCreatedAtDesc();
     PostDto getPostById(Long postId);
     Page<PostDto> getAllPostsPaged(Pageable pageable);
+    Page<PostDto> searchPosts(String searchCategory, String searchKeyword, Pageable pageable);
 }

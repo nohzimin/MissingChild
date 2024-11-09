@@ -9,6 +9,7 @@ import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,9 @@ public class PostController {
     // 페이지 네이션
     @GetMapping("/list")
     public String PostListPage(HttpSession session, Model model,
-                               @RequestParam(value = "page", defaultValue = "0") int page) {
+                               @RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(required = false) String searchCategory,
+                               @RequestParam(required = false) String searchKeyword) {
 
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
         String email = (String) session.getAttribute("userEmail");
@@ -41,8 +44,13 @@ public class PostController {
 
 
         int pageSize = 10;  // 한 페이지당 게시글 수
-        Pageable pageable = PageRequest.of(page, pageSize);
-        Page<PostDto> postsPage = postService.getAllPostsPaged(pageable);
+
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+        Page<PostDto> postsPage = postService.searchPosts(searchCategory, searchKeyword, pageable);
+
+        model.addAttribute("postsPage", postsPage);
+        model.addAttribute("searchCategory", searchCategory);
+        model.addAttribute("searchKeyword", searchKeyword);
 
         model.addAttribute("postsPage", postsPage);
 

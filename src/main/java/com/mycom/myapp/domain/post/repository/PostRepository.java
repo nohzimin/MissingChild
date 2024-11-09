@@ -16,4 +16,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 페이지네이션
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    // 게시글 검색
+    Page<Post> findByTitleContaining(String title, Pageable pageable);
+    Page<Post> findByUserNickNameContaining(String nickname, Pageable pageable);
 }

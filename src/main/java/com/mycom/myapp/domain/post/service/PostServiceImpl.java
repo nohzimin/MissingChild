@@ -1,5 +1,6 @@
 package com.mycom.myapp.domain.post.service;
 
+import com.mycom.myapp.domain.comment.repository.CommentRepository;
 import com.mycom.myapp.domain.post.dto.PostDto;
 import com.mycom.myapp.domain.post.entity.Post;
 import com.mycom.myapp.domain.post.repository.PostRepository;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public PostDto createPost(PostDto postDto) {
@@ -92,6 +94,34 @@ public class PostServiceImpl implements PostService {
 
 
 
+    // 게시글 검색
+    @Override
+    public Page<PostDto> searchPosts(String searchCategory, String searchKeyword, Pageable pageable) {
+        Page<Post> postPage;
+
+        if (searchKeyword == null || searchKeyword.isEmpty()) {
+            postPage = postRepository.findAll(pageable);
+        } else {
+            switch (searchCategory) {
+                case "title":
+                    postPage = postRepository.findByTitleContaining(searchKeyword, pageable);
+                    break;
+                case "author":
+                    postPage = postRepository.findByUserNickNameContaining(searchKeyword, pageable);
+                    break;
+                default:
+                    postPage = postRepository.findAll(pageable);
+            }
+        }
+
+        return postPage.map(post -> {
+            PostDto dto = convertToPostDto(post);
+            // 각 게시글의 댓글 수를 조회하여 설정
+            Long commentCount = commentRepository.countByPostId(post.getPostId());
+            dto.setCommentCount(commentCount);
+            return dto;
+        });
+    }
 
 
 

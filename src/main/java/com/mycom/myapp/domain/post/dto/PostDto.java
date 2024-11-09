@@ -16,4 +16,5 @@ public class PostDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String authorNickname; // 작성자 닉네임 추가
+    private Long commentCount; // 댓글 수를 저장할 필드 추가
 }
