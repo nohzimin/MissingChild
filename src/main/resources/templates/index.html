@@ -164,22 +164,20 @@
 <section class="recent-cases">
     <div class="container">
         <h2>최근 등록된 실종 아동</h2>
-        <div id="caseCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div id="searchResults" class="cases-grid d-flex justify-content-center">
-                        <!-- 동적으로 추가될 내용 -->
-                    </div>
+        <div class="carousel-container">
+            <div id="caseCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner" id="searchResults">
+                    <!-- 여기에 동적으로 카드들이 추가됩니다 -->
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#caseCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#caseCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#caseCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#caseCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </div>
 </section>
@@ -187,7 +185,7 @@
 <!-- Footer -->
 <footer>
     <p>&copy; 노나리조</p>
-    <a href="#" class="scroll-top">맨 위로</a>
+    <a href="#" class="scroll-top">🔝</a>
 </footer>
 
 <!-- 사용자 이메일을 서버에서 받아와 세션 스토리지에 저장 -->
@@ -214,21 +212,36 @@
         let response = await fetch(url);
         let data = await response.json();
         if(data.result == "success") {
-            console.log(data);
-
             let missingChildDtoList = data.missingChildDtoList;
-            let listHtml = ``;
-            missingChildDtoList.forEach(child => {
-                listHtml += `<div class="case-card mx-3">
-                    <img src="/assets/img/child/${child.photoUrl}" alt="${child.childName}">
-                    <div class="case-info">
-                        <h3>${child.childName}</h3>
-                        <p>현재나이: <span>${child.childAge}</span>세</p>
-                        <p>실종일자: <br> <span>${child.missingSince}</span></p>
+            let searchResults = document.querySelector('#searchResults');
+            searchResults.innerHTML = ''; // 기존 내용 초기화
+
+            // 4개씩 그룹화
+            for(let i = 0; i < missingChildDtoList.length; i += 4) {
+                let groupCards = missingChildDtoList.slice(i, i + 4);
+                let carouselItem = document.createElement('div');
+                carouselItem.className = 'carousel-item' + (i === 0 ? ' active' : '');
+
+                let cardsWrapper = document.createElement('div');
+                cardsWrapper.className = 'cards-wrapper';
+
+                groupCards.forEach(child => {
+                    let card = `
+                    <div class="case-card">
+                        <img src="/assets/img/child/${child.photoUrl}" alt="${child.childName}">
+                        <div class="case-info">
+                            <h3>${child.childName}</h3>
+                            <p>현재나이: <span>${child.childAge}</span>세</p>
+                            <p>실종일자: <br> <span>${child.missingSince}</span></p>
+                        </div>
                     </div>
-                </div>`;
-            });
-            document.querySelector('#searchResults').innerHTML = listHtml;
+                `;
+                    cardsWrapper.innerHTML += card;
+                });
+
+                carouselItem.appendChild(cardsWrapper);
+                searchResults.appendChild(carouselItem);
+            }
         } else {
             alert("상세조회 과정에서 오류가 발생했습니다.");
         }
@@ -242,7 +255,77 @@
             behavior: 'smooth'
         });
     });
-</script>
 
+    // 스크롤 탑 버튼 표시/숨김 처리
+    window.addEventListener('scroll', function() {
+        const scrollTop = document.querySelector('.scroll-top');
+        if (window.scrollY > 500) {
+            scrollTop.classList.add('visible');
+        } else {
+            scrollTop.classList.remove('visible');
+        }
+    });
+
+    // 차트 애니메이션 효과
+    document.addEventListener('DOMContentLoaded', function() {
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, options);
+
+        document.querySelectorAll('.chart-container').forEach(chart => {
+            observer.observe(chart);
+        });
+    });
+
+    // 피처 카드 애니메이션
+    document.querySelectorAll('.feature-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.querySelector('.card').style.transform = 'rotateY(180deg)';
+        });
+
+        item.addEventListener('mouseleave', function() {
+            this.querySelector('.card').style.transform = 'rotateY(0deg)';
+        });
+    });
+</script>
 </body>
 </html>
