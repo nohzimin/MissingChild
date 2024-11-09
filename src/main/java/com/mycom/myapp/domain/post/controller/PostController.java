@@ -2,16 +2,19 @@ package com.mycom.myapp.domain.post.controller;
 
 import com.mycom.myapp.domain.comment.dto.CommentDto;
 import com.mycom.myapp.domain.comment.service.CommentService;
+import com.mycom.myapp.domain.post.entity.Post;
 import com.mycom.myapp.domain.post.service.PostService;
 import com.mycom.myapp.domain.post.dto.PostDto;
 import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -26,20 +29,22 @@ public class PostController {
 
 
     // 게시글 전체 리스트 불러오기
+    // 페이지 네이션
     @GetMapping("/list")
-    public String PostListPage(HttpSession session, Model model) {
+    public String PostListPage(HttpSession session, Model model,
+                               @RequestParam(value = "page", defaultValue = "0") int page) {
+
         // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
         String email = (String) session.getAttribute("userEmail");
         User user = userRepository.findByEmail(email);
         model.addAttribute("user", user);
 
 
-        // 게시글을 최신순으로 정렬하여 가져옴
-        List<PostDto> posts = postService.getAllPostsOrderByCreatedAtDesc();
-        model.addAttribute("posts", posts);
+        int pageSize = 10;  // 한 페이지당 게시글 수
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<PostDto> postsPage = postService.getAllPostsPaged(pageable);
 
-//        List<PostDto> posts = postService.getAllPosts();
-//        model.addAttribute("posts", posts);
+        model.addAttribute("postsPage", postsPage);
 
 
         return "PostList";
@@ -90,6 +95,5 @@ public class PostController {
 
         return "PostDetail";
     }
-
 
 }

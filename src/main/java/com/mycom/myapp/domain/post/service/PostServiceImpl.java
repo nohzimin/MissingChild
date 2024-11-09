@@ -7,6 +7,8 @@ import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,6 +83,18 @@ public class PostServiceImpl implements PostService {
 
         return postDto;
     }
+
+    @Override
+    public Page<PostDto> getAllPostsPaged(Pageable pageable) {
+        return postRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(this::convertToPostDto); // Post 엔티티를 PostDto로 변환하여 반환
+    }
+
+
+
+
+
+
 
     private PostDto convertToPostDto(Post post) {
         PostDto dto = new PostDto();
