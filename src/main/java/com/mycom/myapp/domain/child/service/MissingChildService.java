@@ -16,4 +16,7 @@ public interface MissingChildService {
     List<MissingChildDto> searchByClassNames(List<String> classNames);
 //    MissingChildResultDto insertMissingChild(MissingChildRegisterDto missingChildRegisterDto);
     MissingChildDto getMissingChildById(Integer childId);
+    MissingChildDto updateMissingChild(Integer childId, MissingChildDto childDto);
+    void deleteMissingChild(Integer childId);
+
 }

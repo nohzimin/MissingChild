@@ -33,11 +33,28 @@ public class PostController {
         User user = userRepository.findByEmail(email);
         model.addAttribute("user", user);
 
-        List<PostDto> posts = postService.getAllPosts();
+
+        // 게시글을 최신순으로 정렬하여 가져옴
+        List<PostDto> posts = postService.getAllPostsOrderByCreatedAtDesc();
         model.addAttribute("posts", posts);
+
+//        List<PostDto> posts = postService.getAllPosts();
+//        model.addAttribute("posts", posts);
 
 
         return "PostList";
+    }
+
+
+    // 게시글 등 페이지 연결
+    @GetMapping("/upload")
+    public String PostUploadPage(HttpSession session, Model model) {
+        // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
+        String email = (String) session.getAttribute("userEmail");
+        User user = userRepository.findByEmail(email);
+        model.addAttribute("user", user);
+
+        return "PostWrite";
     }
 
 

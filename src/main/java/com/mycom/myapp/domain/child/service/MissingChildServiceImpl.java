@@ -4,21 +4,25 @@ import com.mycom.myapp.domain.child.dto.MissingChildDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
 import com.mycom.myapp.domain.child.entity.MissingChild;
 import com.mycom.myapp.domain.child.repository.MissingChildRepository;
+import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MissingChildServiceImpl implements MissingChildService {
 
     private final MissingChildRepository missingChildRepository;
+    private final UserRepository userRepository;
 //    private final ReportRepository reportRepository;
 
 
@@ -42,6 +46,8 @@ public class MissingChildServiceImpl implements MissingChildService {
             missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
             missingChildDto.setMissingSince(child.getMissingSince());
             missingChildDto.setPhotoUrl(child.getPhotoUrl());
+            missingChildDto.setUserId(child.getUser().getUserId());
+
 
             missingChildDtoList.add(missingChildDto);
         });
@@ -72,6 +78,8 @@ public class MissingChildServiceImpl implements MissingChildService {
             missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
             missingChildDto.setMissingSince(child.getMissingSince());
             missingChildDto.setPhotoUrl(child.getPhotoUrl());
+            missingChildDto.setUserId(child.getUser().getUserId());
+
 
             missingChildDtoList.add(missingChildDto);
         });
@@ -103,6 +111,7 @@ public class MissingChildServiceImpl implements MissingChildService {
             missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
             missingChildDto.setMissingSince(child.getMissingSince());
             missingChildDto.setPhotoUrl(child.getPhotoUrl());
+            missingChildDto.setUserId(child.getUser().getUserId());
 
             missingChildDtoList.add(missingChildDto);
         });
@@ -134,6 +143,8 @@ public class MissingChildServiceImpl implements MissingChildService {
                 missingChildDto.setLastKnownLocation(child.getLastKnownLocation());
                 missingChildDto.setMissingSince(child.getMissingSince());
                 missingChildDto.setPhotoUrl(child.getPhotoUrl());
+                missingChildDto.setUserId(child.getUser().getUserId());
+
 
                 missingChildDtoList.add(missingChildDto); // Add the DTO to the results list
             });
@@ -157,15 +168,62 @@ public class MissingChildServiceImpl implements MissingChildService {
         missingChildDto.setLastKnownLocation(missingChild.getLastKnownLocation());
         missingChildDto.setMissingSince(missingChild.getMissingSince());
         missingChildDto.setPhotoUrl(missingChild.getPhotoUrl());
-
-        // 필요시 User의 특정 정보 추가 설정 (예: User 이름)
-//        missingChildDto.setUserName(missingChild.getUser().getName());
-
+        missingChildDto.setUserId(missingChild.getUser().getUserId());
 
         return missingChildDto;
-
     }
 
+    @Override
+    @Transactional
+    public MissingChildDto updateMissingChild(Integer childId, MissingChildDto childDto) {
+        MissingChild existingChild = missingChildRepository.findById(childId)
+                .orElseThrow(() -> new RuntimeException("Missing child not found with id: " + childId));
+
+        updateChildFromDto(existingChild, childDto);
+        MissingChild updatedChild = missingChildRepository.save(existingChild);
+        return convertToMissingChildDto(updatedChild);
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteMissingChild(Integer childId) {
+        if (!missingChildRepository.existsById(childId)) {
+            throw new RuntimeException("Missing child not found with id: " + childId);
+        }
+        missingChildRepository.deleteById(childId);
+    }
+
+
+    // Helper methods for DTO conversion
+    private MissingChildDto convertToMissingChildDto(MissingChild child) {
+        MissingChildDto dto = new MissingChildDto();
+        dto.setChildId(child.getChildId());
+        dto.setChildName(child.getChildName());
+        dto.setChildGender(child.getChildGender());
+        dto.setDateOfBirth(child.getDateOfBirth());
+        dto.setChildAge(child.getChildAge());
+        dto.setLastKnownLocation(child.getLastKnownLocation());
+        dto.setMissingSince(child.getMissingSince());
+        dto.setPhotoUrl(child.getPhotoUrl());
+        dto.setUserId(child.getUser().getUserId());
+        return dto;
+    }
+
+    private void updateChildFromDto(MissingChild child, MissingChildDto dto) {
+        child.setChildName(dto.getChildName());
+        child.setChildGender(dto.getChildGender());
+        child.setDateOfBirth(dto.getDateOfBirth());
+        child.setChildAge(dto.getChildAge());
+        child.setLastKnownLocation(dto.getLastKnownLocation());
+        child.setMissingSince(dto.getMissingSince());
+        child.setPhotoUrl(dto.getPhotoUrl());
+        child.setUpdatedAt(LocalDateTime.now());
+        if (dto.getUserId() != null) {
+            child.setUser(userRepository.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId())));
+        }
+    }
 
 //
 //    @Override

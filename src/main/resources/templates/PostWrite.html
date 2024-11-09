@@ -7,11 +7,16 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="/assets/css/header.css" rel="stylesheet">
   <style>
+    body {
+      background-color: #f5f5f5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
     .container {
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 50px auto;
       padding: 20px;
-      height: calc(100vh - 60px); /* 헤더 높이만 제외 */
+      height: calc(100vh - 160px); /* 헤더 높이와 여백 고려 */
       display: flex;
       flex-direction: column;
     }
@@ -19,12 +24,18 @@
     .write-form {
       flex: 1;
       background: white;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 2rem;
+      border: none;
+      border-radius: 25px;
+      padding: 2.5rem;
       display: flex;
       flex-direction: column;
       height: 100%;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .write-form:hover {
+      transform: translateY(-5px);
     }
 
     .title-input {
@@ -33,19 +44,30 @@
       border: none;
       outline: none;
       font-weight: 600;
-      color: #37352f;
+      color: #333;
       padding: 0.5rem 0;
+      border-radius: 15px;
+      transition: all 0.3s ease;
     }
 
     .title-input::placeholder {
-      color: #b3b3b3;
+      color: #adb5bd;
+    }
+
+    .title-input:focus {
+      transform: scale(1.01);
     }
 
     .title-divider {
       width: 100%;
-      height: 1px;
-      background-color: #eee;
+      height: 2px;
+      background-color: #dee2e6;
       margin: 1.5rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .write-form:focus-within .title-divider {
+      background-color: #333;
     }
 
     .content-input {
@@ -54,21 +76,31 @@
       border: none;
       outline: none;
       flex: 1;
-      color: #37352f;
+      color: #333;
       line-height: 1.6;
       padding: 0.5rem 0;
       resize: none;
+      border-radius: 15px;
+      transition: all 0.3s ease;
     }
 
     .content-input::placeholder {
-      color: #b3b3b3;
+      color: #adb5bd;
+    }
+
+    .content-input:focus {
+      transform: scale(1.01);
     }
 
     .navigation-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      background-color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     .back-button {
@@ -77,31 +109,111 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 25px;
+      transition: all 0.3s ease;
     }
 
     .back-button:hover {
       color: #333;
+      background-color: #f8f9fa;
+      transform: translateX(-5px);
     }
 
     .submit-button {
-      padding: 0.5rem 1.5rem;
-      font-size: 1rem;
+      padding: 0.8rem 2rem;
+      font-size: 1.1rem;
       background-color: #333;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 25px;
       cursor: pointer;
-      transition: background-color 0.2s;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .submit-button:hover {
-      background-color: #444;
+      background-color: #1a1a1a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .submit-button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .button-wrapper {
       flex: 1;
       display: flex;
       justify-content: center;
+    }
+
+    /* 애니메이션 효과 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .write-form {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      .container {
+        margin: 20px auto;
+        padding: 15px;
+      }
+
+      .write-form {
+        padding: 1.5rem;
+      }
+
+      .title-input {
+        font-size: 1.8rem;
+      }
+
+      .navigation-bar {
+        padding: 0.8rem 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .submit-button {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+      }
+
+      .back-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* 스크롤바 스타일링 */
+    .content-input::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .content-input::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    .content-input::-webkit-scrollbar-thumb {
+      background: #666;
+      border-radius: 4px;
+    }
+
+    .content-input::-webkit-scrollbar-thumb:hover {
+      background: #333;
     }
   </style>
 </head>
@@ -177,25 +289,77 @@
 
 
 
-  <div class="container">
-    <div class="navigation-bar">
-      <a href="javascript:history.back()" class="back-button">
-        <i class="fas fa-arrow-left"></i>
-        뒤로가기
-      </a>
-      <div class="button-wrapper">
-        <button class="submit-button">등록하기</button>
-      </div>
-      <div style="width: 80px;"><!-- 우측 여백 맞추기용 --></div>
+<div class="container">
+  <div class="navigation-bar">
+    <a href="javascript:history.back()" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+      뒤로가기
+    </a>
+    <div class="button-wrapper">
+      <button class="submit-button" id="submitPost">등록하기</button>
     </div>
-
-    <form class="write-form">
-      <input type="text" class="title-input" placeholder="제목을 입력하세요." required>
-      <div class="title-divider"></div>
-      <textarea class="content-input" placeholder="내용을 입력하세요." required></textarea>
-    </form>
+    <div style="width: 80px;"><!-- 우측 여백 맞추기용 --></div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <form class="write-form" id="postForm">
+    <input type="text" class="title-input" id="postTitle" placeholder="제목을 입력하세요." required>
+    <div class="title-divider"></div>
+    <textarea class="content-input" id="postContent" placeholder="내용을 입력하세요." required></textarea>
+    <!-- 히든 필드로 유저 ID 추가 -->
+    <input type="hidden" id="userId" th:value="${user.userId}">
+  </form>
+</div>
+
+<script src="/assets/js/header.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- AJAX 요청을 위한 스크립트 추가 -->
+<script>
+  document.getElementById('submitPost').addEventListener('click', function(e) {
+    e.preventDefault();
+
+    // 입력값 가져오기
+    const title = document.getElementById('postTitle').value;
+    const content = document.getElementById('postContent').value;
+    const userId = document.getElementById('userId').value;
+
+    // 입력값 검증
+    if (!title.trim() || !content.trim()) {
+      alert('제목과 내용을 모두 입력해주세요.');
+      return;
+    }
+
+    // 전송할 데이터 객체 생성
+    const postData = {
+      userId: userId,
+      title: title,
+      content: content
+    };
+
+    // AJAX 요청
+    fetch('/api/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postData)
+    })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              // 성공 시 게시글 목록 페이지로 이동
+              alert('게시글이 성공적으로 등록되었습니다.');
+              window.location.href = '/board/list';
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('게시글 등록에 실패했습니다. 다시 시도해주세요.');
+            });
+  });
+</script>
 </body>
 </html>

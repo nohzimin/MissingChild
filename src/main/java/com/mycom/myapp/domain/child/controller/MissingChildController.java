@@ -7,6 +7,7 @@ import com.mycom.myapp.domain.child.entity.MissingChild;
 import com.mycom.myapp.domain.child.service.MissingChildService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -63,6 +64,19 @@ public class MissingChildController {
     @GetMapping("/list/{childId}")
     public MissingChildDto getMissingChildDetail(@PathVariable Integer childId) {
         return missingChildService.getMissingChildById(childId);
+    }
+
+    @PutMapping("/update/{childId}")
+    public ResponseEntity<MissingChildDto> updateMissingChild(
+            @PathVariable("childId") Integer childId,
+            @RequestBody MissingChildDto missingChildDto) {
+        return ResponseEntity.ok(missingChildService.updateMissingChild(childId, missingChildDto));
+    }
+
+    @DeleteMapping("/delete/{childId}")
+    public ResponseEntity<Void> deleteMissingChild(@PathVariable("childId") Integer childId) {
+        missingChildService.deleteMissingChild(childId);
+        return ResponseEntity.noContent().build();
     }
 
 
