@@ -1,9 +1,14 @@
 package com.mycom.myapp.domain.child.service;
 
+import com.mycom.myapp.domain.child.dto.ChildTrainImageDto;
 import com.mycom.myapp.domain.child.dto.MissingChildDto;
+import com.mycom.myapp.domain.child.dto.MissingChildRegisterDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
+import com.mycom.myapp.domain.child.entity.ChildTrainImage;
 import com.mycom.myapp.domain.child.entity.MissingChild;
+import com.mycom.myapp.domain.child.repository.ChildTrainImageRepository;
 import com.mycom.myapp.domain.child.repository.MissingChildRepository;
+import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -16,7 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,8 @@ public class MissingChildServiceImpl implements MissingChildService {
 
     private final MissingChildRepository missingChildRepository;
     private final UserRepository userRepository;
+    private final ChildTrainImageRepository childTrainImageRepository;
+
 
 
     @Override
@@ -194,6 +200,70 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildDto;
     }
 
+//    @Override
+//    @Transactional
+//    public MissingChild saveMissingChild(MissingChildDto missingChildDto) {
+//        User user = userRepository.findById(missingChildDto.getUserId())
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+//
+//        MissingChild missingChild = new MissingChild();
+//        missingChild.setChildName(missingChildDto.getChildName());
+//        missingChild.setChildGender(missingChildDto.getChildGender());
+//        missingChild.setDateOfBirth(missingChildDto.getDateOfBirth());
+//        missingChild.setChildAge(missingChildDto.getChildAge());
+//        missingChild.setLastKnownLocation(missingChildDto.getLastKnownLocation());
+//        missingChild.setMissingSince(missingChildDto.getMissingSince());
+//        missingChild.setPhotoUrl(missingChildDto.getPhotoUrl());
+//        missingChild.setUser(user);
+//
+//        return missingChildRepository.save(missingChild);
+//    }
+
+    @Override
+    @Transactional
+    public MissingChildRegisterDto saveMissingChildWithImages(MissingChildRegisterDto missingChildRegisterDto) {
+        MissingChildDto missingChildDto = missingChildRegisterDto.getMissingChildDto();
+        List<ChildTrainImageDto> childTrainImageDtoList = missingChildRegisterDto.getChildTrainImageDtoList();
+
+        // 사용자 정보 조회
+        User user = userRepository.findById(missingChildDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+
+        // MissingChild 엔티티 설정
+        MissingChild missingChild = new MissingChild();
+        missingChild.setChildName(missingChildDto.getChildName());
+        missingChild.setChildGender(missingChildDto.getChildGender());
+        missingChild.setDateOfBirth(missingChildDto.getDateOfBirth());
+        missingChild.setChildAge(missingChildDto.getChildAge());
+        missingChild.setLastKnownLocation(missingChildDto.getLastKnownLocation());
+        missingChild.setMissingSince(missingChildDto.getMissingSince());
+        missingChild.setPhotoUrl(missingChildDto.getPhotoUrl());
+        missingChild.setUser(user);
+
+        // MissingChild 엔티티 저장
+        MissingChild savedChild = missingChildRepository.save(missingChild);
+
+        // 학습 이미지 리스트 저장
+        if (childTrainImageDtoList != null && !childTrainImageDtoList.isEmpty()) {
+            for (ChildTrainImageDto imageDto : childTrainImageDtoList) {
+                ChildTrainImage trainImage = new ChildTrainImage();
+                trainImage.setImageUrl(imageDto.getImageUrl());
+                trainImage.setMissingChild(savedChild);
+                ChildTrainImage savedImage = childTrainImageRepository.save(trainImage);
+                imageDto.setImageId(savedImage.getImageId());
+                imageDto.setChildId(savedChild.getChildId());
+            }
+        }
+
+        // 반환할 DTO 설정
+        missingChildDto.setChildId(savedChild.getChildId());
+        MissingChildRegisterDto responseDto = new MissingChildRegisterDto();
+        responseDto.setMissingChildDto(missingChildDto);
+        responseDto.setChildTrainImageDtoList(childTrainImageDtoList);
+        return responseDto;
+    }
+
+
     @Override
     @Transactional
     public MissingChildDto updateMissingChild(Integer childId, MissingChildDto childDto) {
@@ -245,47 +315,6 @@ public class MissingChildServiceImpl implements MissingChildService {
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId())));
         }
     }
-
-//
-//    @Override
-//    @Transactional
-//    public MissingChildResultDto insertMissingChild(MissingChildRegisterDto missingChildRegisterDto) {
-//        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
-//
-//        try {
-//            // Create and save the Report entity
-//            Report report = new Report();
-//            report.setReporterName(missingChildRegisterDto.getReporterName());
-//            report.setReporterPhone(missingChildRegisterDto.getReporterPhone());
-//            report.setReporterEmail(missingChildRegisterDto.getReporterEmail());
-//            report.setReportDate(LocalDate.now()); // Set the current date
-//
-//            reportRepository.save(report);
-//
-//            // Create MissingChild entity and map values from DTO
-//            MissingChild missingChild = new MissingChild();
-//            missingChild.setChildName(missingChildRegisterDto.getChildName());
-//            missingChild.setChildGender(missingChildRegisterDto.getChildGender());
-//            missingChild.setChildAge(missingChildRegisterDto.getChildAge());
-//            missingChild.setLastKnownLocation(missingChildRegisterDto.getLastKnownLocation());
-//            missingChild.setMissingSince(missingChildRegisterDto.getMissingSince());
-//            missingChild.setPhotoUrl(missingChildRegisterDto.getPhotoUrl()); // Set the uploaded image URL
-//
-//            // Associate the report with the missing child
-//            missingChild.setReport(report); // If needed, link the report to the missing child
-//
-//            // Save the missing child entity
-//            missingChildRepository.save(missingChild);
-//
-//            missingChildResultDto.setResult("success");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            missingChildResultDto.setResult("fail: unexpected error");
-//        }
-//
-//        return missingChildResultDto;
-//    }
-
 
 
 }

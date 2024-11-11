@@ -1,19 +1,14 @@
 package com.mycom.myapp.domain.child.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class MissingChildRegisterDto {
-    private String reporterName;
-    private String reporterEmail;
-    private String reporterPhone;
-
-    private String childName;
-    private Integer childAge;
-    private Character childGender;
-    private String lastKnownLocation;
-    private LocalDate missingSince;
-    private String photoUrl; // URL of the uploaded image
+    private MissingChildDto missingChildDto;
+    private List<ChildTrainImageDto> childTrainImageDtoList; // 리스트로 변경
 }

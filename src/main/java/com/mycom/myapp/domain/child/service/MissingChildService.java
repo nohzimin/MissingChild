@@ -14,12 +14,12 @@ public interface MissingChildService {
 
     MissingChildResultDto getAllMissingChild();
     Page<MissingChildDto> getAllMissingChild(Pageable pageable);
-
     MissingChildResultDto searchMissingChild(String name, Character gender, Integer age, String location, LocalDate date);
     MissingChildResultDto searchRecent();
     List<MissingChildDto> searchByClassNames(List<String> classNames);
-//    MissingChildResultDto insertMissingChild(MissingChildRegisterDto missingChildRegisterDto);
     MissingChildDto getMissingChildById(Integer childId);
+//    MissingChild saveMissingChild(MissingChildDto missingChildDto);
+    MissingChildRegisterDto saveMissingChildWithImages(MissingChildRegisterDto missingChildRegisterDto);
     MissingChildDto updateMissingChild(Integer childId, MissingChildDto childDto);
     void deleteMissingChild(Integer childId);
 

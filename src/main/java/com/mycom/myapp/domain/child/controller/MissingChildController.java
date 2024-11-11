@@ -1,6 +1,7 @@
 package com.mycom.myapp.domain.child.controller;
 
 import com.mycom.myapp.domain.child.dto.MissingChildDto;
+import com.mycom.myapp.domain.child.dto.MissingChildRegisterDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
 import com.mycom.myapp.domain.child.dto.SearchImageRequest;
 import com.mycom.myapp.domain.child.entity.MissingChild;
@@ -89,31 +90,11 @@ public class MissingChildController {
         return ResponseEntity.noContent().build();
     }
 
-
-
-//
-//    @PutMapping("/register")
-//    public ResponseEntity<MissingChildResultDto> insertMissingChild(@RequestPart(value = "missingChild") MissingChildRegisterDto missingChildRegisterDto,
-//                                                                    @RequestPart(value = "image") MultipartFile image) throws IOException {
-//        // Upload the image and get the URL
-//        String imageUrl = imageUploadService.upload(image);
-//        missingChildRegisterDto.setPhotoUrl(imageUrl); // Set the photo URL
-//
-//        // Call the service to insert the missing child
-//        MissingChildResultDto result = missingChildService.insertMissingChild(missingChildRegisterDto);
-//
-//        if ("success".equals(result.getResult())) {
-//            return ResponseEntity.ok(result);
-//        } else {
-//            return ResponseEntity.status(400).body(result);
-//        }
-//    }
-
-
-
-
-
-
+    @PostMapping("/register")
+    public ResponseEntity<MissingChildRegisterDto> registerMissingChild(@RequestBody MissingChildRegisterDto missingChildRegisterDto) {
+        MissingChildRegisterDto responseDto = missingChildService.saveMissingChildWithImages(missingChildRegisterDto);
+        return ResponseEntity.ok(responseDto);
+    }
 
 
 }

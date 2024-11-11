@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -58,12 +59,8 @@ public class MissingChild {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "report_id", nullable = false)
-//    @ToString.Exclude
-//    private Report report;
+    @OneToMany(mappedBy = "missingChild", cascade = CascadeType.ALL)
+    private List<ChildTrainImage> trainImages; // 학습 이미지와 연관
 
 }
 
