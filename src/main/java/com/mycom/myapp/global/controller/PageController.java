@@ -143,18 +143,16 @@ public class PageController {
         return "search";
     }
 
-//    @GetMapping("/admin/missing-child/list")
-//    public String adminMissingChildListPage(HttpSession session, Model model) {
-//        // 세션에서 관리자 이메일 가져옴
-//        String adminEmail = (String) session.getAttribute("adminEmail");
-//        System.out.println(adminEmail);
-//
-//        Admin admin = adminRepository.findByAdminEmail(adminEmail);
-//        model.addAttribute("admin", admin);
-//
-//
-//        return "admin";
-//    }
+
+    @GetMapping("/missing-child/register")
+    public String MissingChildInsertPage(HttpSession session, Model model) {
+        String email = (String) session.getAttribute("userEmail");
+        System.out.println(email);
+        User user = userRepository.findByEmail(email);
+        model.addAttribute("user", user);
+
+        return "childInsertPage";
+    }
 
 
 
