@@ -382,7 +382,7 @@
                 <label>대표 사진</label>
                 <div class="file-input-wrapper">
                     <button class="btn-file" type="button">대표 사진 선택</button>
-                    <input type="file" id="mainImage" name="main_image" accept="image/*" required>
+                    <input type="file" id="mainImage" name="mainImage" accept="image/*" required>
                 </div>
             </div>
         </div>
@@ -430,7 +430,7 @@
                 <br>얼굴(눈,코,입)이 잘 보이도록 잘라서 올려주세요.</br></label>
             <div class="file-input-wrapper">
                 <button class="btn-file" type="button">5MB 이하의 사진 선택 (복수 선택 가능)</button>
-                <input type="file" id="wr_file" name="bf_file[]" accept="image/*" multiple>
+                <input type="file" id="wr_file" name="trainImages" accept="image/*" multiple>
             </div>
             <div id="imagePreviewContainer" class="image-preview-container"></div>
         </div>
@@ -447,48 +447,72 @@ const mainImageInput = document.getElementById('mainImage');
 const mainImagePreview = document.getElementById('mainImagePreview');
 const maxFileSize = 5 * 1024 * 1024; // 5MB
 
-// 대표 이미지 프리뷰
-mainImageInput.addEventListener('change', function(e) {
-    if (e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
+    // 대표 이미지 프리뷰
+    mainImageInput.addEventListener('change', function(e) {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
 
-        reader.onload = function(e) {
-            mainImagePreview.src = e.target.result;
+            reader.onload = function(e) {
+                mainImagePreview.src = e.target.result;
+            }
+
+            reader.readAsDataURL(e.target.files[0]);
+        }
+    });
+
+    // 폼 제출
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        // 폼 데이터 수집
+        const missingChild = {
+            childName: document.getElementById('wr_subject').value,
+            childGender: document.getElementById('gender').value === 'male' ? 'M' : 'F',
+            dateOfBirth: document.getElementById('dateOfBirth').value,
+            childAge: parseInt(document.getElementById('age').value),
+            lastKnownLocation: document.getElementById('location').value,
+            missingSince: document.getElementById('wr_3').value
+        };
+
+        // JSON 데이터를 문자열로 변환하여 추가
+        formData.append('missingChild', JSON.stringify(missingChild));
+
+        // 대표 이미지 추가
+        if (mainImageInput.files && mainImageInput.files[0]) {
+            formData.append('mainImage', mainImageInput.files[0]);
+        } else {
+            alert('대표 사진을 선택해주세요.');
+            return;
         }
 
-        reader.readAsDataURL(e.target.files[0]);
-    }
-});
+        // 추가 이미지 추가
+        if (fileInput.files) {
+            Array.from(fileInput.files).forEach(file => {
+                formData.append('trainImages', file);
+            });
+        }
 
-// 폼 제출
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-
-    // 대표 이미지 필수 체크
-    if (!mainImageInput.files || mainImageInput.files.length === 0) {
-        alert('대표 사진을 선택해주세요.');
-        return;
-    }
-
-    fetch('/api/missing-child/register/child', {
-        method: 'PUT',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.result === 'success') {
-                alert('실종자 정보가 제출되었습니다.');
-                window.location.href = '/missing-child/list';
-            } else {
-                alert('실종자 정보 제출에 실패했습니다. 다시 시도해주세요.');
-            }
+        // API 호출
+        fetch('/api/missing-child/register', {
+            method: 'POST',
+            body: formData
         })
-        .catch(error => {
-            console.error('오류 발생:', error);
-            alert('오류가 발생했습니다. 나중에 다시 시도해주세요.');
-        });
-});
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.missingChildDto) {
+                    alert('실종자 정보가 등록되었습니다.');
+                    window.location.href = '/missing-child/list';
+                } else {
+                    alert('실종자 등록 중 오류가 발생했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('오류 발생:', error);
+                alert('등록 실패: 서버에 문제가 발생했습니다.');
+            });
+    });
 
 // 파일 입력 필드와 이미지 미리보기 처리
 fileInput.addEventListener('change', function(e) {

@@ -182,6 +182,21 @@
     </div>
 </section>
 
+<!-- 아동 상세 정보 모달 -->
+<div id="childDetailModal" class="modal fade" tabindex="-1" aria-labelledby="childDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="childDetailLabel">아동 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="childDetailContent">
+                <!-- 아동 상세 정보가 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Footer -->
 <footer>
     <p>&copy; 노나리조</p>
@@ -211,13 +226,13 @@
         let url = "/api/missing-child/recentList";
         let response = await fetch(url);
         let data = await response.json();
-        if(data.result == "success") {
+        if (data.result == "success") {
             let missingChildDtoList = data.missingChildDtoList;
             let searchResults = document.querySelector('#searchResults');
             searchResults.innerHTML = ''; // 기존 내용 초기화
 
             // 4개씩 그룹화
-            for(let i = 0; i < missingChildDtoList.length; i += 4) {
+            for (let i = 0; i < missingChildDtoList.length; i += 4) {
                 let groupCards = missingChildDtoList.slice(i, i + 4);
                 let carouselItem = document.createElement('div');
                 carouselItem.className = 'carousel-item' + (i === 0 ? ' active' : '');
@@ -226,17 +241,21 @@
                 cardsWrapper.className = 'cards-wrapper';
 
                 groupCards.forEach(child => {
-                    let card = `
-                    <div class="case-card">
-                        <img src="/assets/img/child/${child.photoUrl}" alt="${child.childName}">
-                        <div class="case-info">
-                            <h3>${child.childName}</h3>
-                            <p>현재나이: <span>${child.childAge}</span>세</p>
-                            <p>실종일자: <br> <span>${child.missingSince}</span></p>
-                        </div>
+                    let card = document.createElement('div');
+                    card.className = 'case-card';
+                    card.innerHTML = `
+                    <img src="${child.photoUrl}" alt="${child.childName}">
+                    <div class="case-info">
+                        <h3>${child.childName}</h3>
+                        <p>현재나이: <span>${child.childAge}</span>세</p>
+                        <p>실종일자: <br> <span>${child.missingSince}</span></p>
                     </div>
                 `;
-                    cardsWrapper.innerHTML += card;
+
+                    // 클릭 이벤트 추가
+                    card.addEventListener('click', () => showChildDetail(child.childId));
+
+                    cardsWrapper.appendChild(card);
                 });
 
                 carouselItem.appendChild(cardsWrapper);
@@ -244,6 +263,39 @@
             }
         } else {
             alert("상세조회 과정에서 오류가 발생했습니다.");
+        }
+    }
+
+    // 아동 상세 정보 모달 표시 함수
+    async function showChildDetail(childId) {
+        try {
+            const url = `/api/missing-child/list/${childId}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("아동 상세 정보를 불러오는 데 실패했습니다.");
+            }
+
+            const child = await response.json();
+
+            const genderText = child.childGender === "M" ? "남자" : "여자";
+
+            const detailHtml = `
+            <img src="${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <h5>이름: ${child.childName}</h5>
+            <p>나이: ${child.childAge}세</p>
+            <p>생일: ${child.dateOfBirth}</p>
+            <p>성별: ${genderText}</p>
+            <p>실종 장소: ${child.lastKnownLocation}</p>
+            <p>실종 일자: ${child.missingSince}</p>
+        `;
+            document.getElementById("childDetailContent").innerHTML = detailHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById("childDetailModal"));
+            modal.show();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
     }
 

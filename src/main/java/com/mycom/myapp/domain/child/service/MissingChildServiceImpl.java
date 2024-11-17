@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -240,34 +241,39 @@ public class MissingChildServiceImpl implements MissingChildService {
             missingChildRepository.save(savedChild); // 대표 이미지 URL 업데이트
         }
 
-        // 학습 이미지 업로드 및 저장
-        List<ChildTrainImageDto> childTrainImageDtoList = new ArrayList<>();
+        // 학습 이미지 업로드
+        List<ChildTrainImage> trainImageEntities = new ArrayList<>();
         if (trainImages != null && !trainImages.isEmpty()) {
-            String trainFolder = "TrainData/" + savedChild.getChildId() + "/";
-            for (MultipartFile trainImage : trainImages) {
-                String trainImageUrl = s3Service.uploadImage(trainImage, trainFolder);
+            for (int i = 0; i < trainImages.size(); i++) {
+                MultipartFile trainImage = trainImages.get(i);
+
+                // 학습 이미지 파일 경로 및 이름 구성
+                String trainImageFilePath = "TrainData/" + savedChild.getChildId() + "/" + savedChild.getChildId() + "-" + (i + 1) + ".jpg";
+
+                // S3에 이미지 업로드
+                String trainImageUrl = s3Service.uploadImage(trainImage, trainImageFilePath);
 
                 // ChildTrainImage 엔티티 생성 및 저장
                 ChildTrainImage trainImageEntity = new ChildTrainImage();
-                trainImageEntity.setImageUrl(trainImageUrl);
                 trainImageEntity.setMissingChild(savedChild);
-                childTrainImageRepository.save(trainImageEntity);
-
-                // DTO 리스트에 추가
-                ChildTrainImageDto trainImageDto = new ChildTrainImageDto();
-                trainImageDto.setImageUrl(trainImageUrl);
-                trainImageDto.setChildId(savedChild.getChildId());
-                childTrainImageDtoList.add(trainImageDto);
+                trainImageEntity.setImageUrl(trainImageUrl);
+                trainImageEntities.add(trainImageEntity);
             }
+            childTrainImageRepository.saveAll(trainImageEntities);
         }
 
-        // 반환 DTO 생성
-        MissingChildRegisterDto responseDto = new MissingChildRegisterDto();
-        missingChildDto.setChildId(savedChild.getChildId());
-        responseDto.setMissingChildDto(missingChildDto);
-        responseDto.setChildTrainImageDtoList(childTrainImageDtoList);
+        missingChildRepository.save(savedChild);
 
-        return responseDto;
+        // 반환 DTO 생성
+        List<ChildTrainImageDto> trainImageDtos = trainImageEntities.stream()
+                .map(image -> new ChildTrainImageDto(image.getImageId(), image.getImageUrl(), savedChild.getChildId()))
+                .collect(Collectors.toList());
+
+        MissingChildRegisterDto registerDto = new MissingChildRegisterDto();
+        registerDto.setMissingChildDto(missingChildDto);
+        registerDto.setChildTrainImageDtoList(trainImageDtos);
+
+        return registerDto;
     }
 
 

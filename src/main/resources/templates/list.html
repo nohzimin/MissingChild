@@ -403,7 +403,7 @@
 
         cardDiv.innerHTML = `
                 <div class="card">
-                    <img src="/assets/img/child/${child.photoUrl}" class="card-img-top" alt="${child.childName}">
+                    <img src="${child.photoUrl}" class="card-img-top" alt="${child.childName}">
                     <div class="card-body">
                         <h5 class="card-title">${child.childName}</h5>
                         <p class="card-text">
@@ -480,7 +480,7 @@
         const genderText = child.childGender === "M" ? "남자" : "여자";
 
         const detailHtml = `
-            <img src="/assets/img/child/${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <img src="${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
             <h5>이름: ${child.childName}</h5>
             <p>나이: ${child.childAge}세</p>
             <p>생일: ${child.dateOfBirth}</p>
