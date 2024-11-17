@@ -1,22 +1,29 @@
 package com.mycom.myapp.domain.child.service;
 
+import com.mycom.myapp.domain.child.dto.ChildTrainImageDto;
 import com.mycom.myapp.domain.child.dto.MissingChildDto;
+import com.mycom.myapp.domain.child.dto.MissingChildRegisterDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
+import com.mycom.myapp.domain.child.entity.ChildTrainImage;
 import com.mycom.myapp.domain.child.entity.MissingChild;
+import com.mycom.myapp.domain.child.repository.ChildTrainImageRepository;
 import com.mycom.myapp.domain.child.repository.MissingChildRepository;
+import com.mycom.myapp.domain.user.entity.User;
 import com.mycom.myapp.domain.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,9 @@ public class MissingChildServiceImpl implements MissingChildService {
 
     private final MissingChildRepository missingChildRepository;
     private final UserRepository userRepository;
+    private final ChildTrainImageRepository childTrainImageRepository;
+    private final S3Service s3Service;
+
 
 
     @Override
@@ -60,7 +70,7 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildResultDto;
     }
 
-    // 모든 missingChild pagenation 해서 가져오기
+    // 모든 missingChild 페이지네이션 해서 가져오기
     @Override
     public Page<MissingChildDto> getAllMissingChild(Pageable pageable) {
         Page<MissingChild> missingChildPage = missingChildRepository.findAll(pageable);
@@ -194,6 +204,79 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildDto;
     }
 
+
+    @Override
+    @Transactional
+    public MissingChildRegisterDto saveMissingChildWithImages(
+            MissingChildDto missingChildDto,
+            MultipartFile mainImage,
+            List<MultipartFile> trainImages) {
+
+        // 현재 로그인된 사용자 가져오기
+        String loggedInUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(loggedInUserEmail); // 이미 존재하는 메서드 활용
+
+        if (user == null) {
+            throw new IllegalArgumentException("로그인된 사용자를 찾을 수 없습니다.");
+        }
+
+        // MissingChild 엔티티 생성
+        MissingChild missingChild = new MissingChild();
+        missingChild.setChildName(missingChildDto.getChildName());
+        missingChild.setChildGender(missingChildDto.getChildGender());
+        missingChild.setDateOfBirth(missingChildDto.getDateOfBirth());
+        missingChild.setChildAge(missingChildDto.getChildAge());
+        missingChild.setLastKnownLocation(missingChildDto.getLastKnownLocation());
+        missingChild.setMissingSince(missingChildDto.getMissingSince());
+        missingChild.setUser(user); // 현재 사용자 설정
+
+        // MissingChild 엔티티를 먼저 저장 (ID 생성)
+        MissingChild savedChild = missingChildRepository.save(missingChild);
+
+        // 대표 이미지 S3 업로드
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String profileFolder = "ChildProfile/";
+            String mainImageUrl = s3Service.uploadImage(mainImage, profileFolder + savedChild.getChildId() + "-profile.jpg");
+            savedChild.setPhotoUrl(mainImageUrl);
+            missingChildRepository.save(savedChild); // 대표 이미지 URL 업데이트
+        }
+
+        // 학습 이미지 업로드
+        List<ChildTrainImage> trainImageEntities = new ArrayList<>();
+        if (trainImages != null && !trainImages.isEmpty()) {
+            for (int i = 0; i < trainImages.size(); i++) {
+                MultipartFile trainImage = trainImages.get(i);
+
+                // 학습 이미지 파일 경로 및 이름 구성
+                String trainImageFilePath = "TrainData/" + savedChild.getChildId() + "/" + savedChild.getChildId() + "-" + (i + 1) + ".jpg";
+
+                // S3에 이미지 업로드
+                String trainImageUrl = s3Service.uploadImage(trainImage, trainImageFilePath);
+
+                // ChildTrainImage 엔티티 생성 및 저장
+                ChildTrainImage trainImageEntity = new ChildTrainImage();
+                trainImageEntity.setMissingChild(savedChild);
+                trainImageEntity.setImageUrl(trainImageUrl);
+                trainImageEntities.add(trainImageEntity);
+            }
+            childTrainImageRepository.saveAll(trainImageEntities);
+        }
+
+        missingChildRepository.save(savedChild);
+
+        // 반환 DTO 생성
+        List<ChildTrainImageDto> trainImageDtos = trainImageEntities.stream()
+                .map(image -> new ChildTrainImageDto(image.getImageId(), image.getImageUrl(), savedChild.getChildId()))
+                .collect(Collectors.toList());
+
+        MissingChildRegisterDto registerDto = new MissingChildRegisterDto();
+        registerDto.setMissingChildDto(missingChildDto);
+        registerDto.setChildTrainImageDtoList(trainImageDtos);
+
+        return registerDto;
+    }
+
+
     @Override
     @Transactional
     public MissingChildDto updateMissingChild(Integer childId, MissingChildDto childDto) {
@@ -245,47 +328,6 @@ public class MissingChildServiceImpl implements MissingChildService {
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId())));
         }
     }
-
-//
-//    @Override
-//    @Transactional
-//    public MissingChildResultDto insertMissingChild(MissingChildRegisterDto missingChildRegisterDto) {
-//        MissingChildResultDto missingChildResultDto = new MissingChildResultDto();
-//
-//        try {
-//            // Create and save the Report entity
-//            Report report = new Report();
-//            report.setReporterName(missingChildRegisterDto.getReporterName());
-//            report.setReporterPhone(missingChildRegisterDto.getReporterPhone());
-//            report.setReporterEmail(missingChildRegisterDto.getReporterEmail());
-//            report.setReportDate(LocalDate.now()); // Set the current date
-//
-//            reportRepository.save(report);
-//
-//            // Create MissingChild entity and map values from DTO
-//            MissingChild missingChild = new MissingChild();
-//            missingChild.setChildName(missingChildRegisterDto.getChildName());
-//            missingChild.setChildGender(missingChildRegisterDto.getChildGender());
-//            missingChild.setChildAge(missingChildRegisterDto.getChildAge());
-//            missingChild.setLastKnownLocation(missingChildRegisterDto.getLastKnownLocation());
-//            missingChild.setMissingSince(missingChildRegisterDto.getMissingSince());
-//            missingChild.setPhotoUrl(missingChildRegisterDto.getPhotoUrl()); // Set the uploaded image URL
-//
-//            // Associate the report with the missing child
-//            missingChild.setReport(report); // If needed, link the report to the missing child
-//
-//            // Save the missing child entity
-//            missingChildRepository.save(missingChild);
-//
-//            missingChildResultDto.setResult("success");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            missingChildResultDto.setResult("fail: unexpected error");
-//        }
-//
-//        return missingChildResultDto;
-//    }
-
 
 
 }

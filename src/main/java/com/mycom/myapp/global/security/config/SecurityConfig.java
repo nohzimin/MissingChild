@@ -83,7 +83,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers("/", "/login", "/signup", "/signupProc",
                                 "/missing-child/list", "/missing-child/search", "/api/missing-child/**",
-                                "/assets/**").permitAll() // 사용자 접근 경로 허용
+                                "/assets/**", "/s3/**").permitAll() // 사용자 접근 경로 허용
                         .anyRequest().authenticated() // 모든 다른 요청은 인증 요구
                 )
                 .formLogin(formLogin -> formLogin
