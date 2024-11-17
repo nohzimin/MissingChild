@@ -1,5 +1,8 @@
 package com.mycom.myapp.domain.child.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mycom.myapp.domain.child.dto.MissingChildDto;
 import com.mycom.myapp.domain.child.dto.MissingChildRegisterDto;
 import com.mycom.myapp.domain.child.dto.MissingChildResultDto;
@@ -14,6 +17,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -91,8 +95,20 @@ public class MissingChildController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<MissingChildRegisterDto> registerMissingChild(@RequestBody MissingChildRegisterDto missingChildRegisterDto) {
-        MissingChildRegisterDto responseDto = missingChildService.saveMissingChildWithImages(missingChildRegisterDto);
+    public ResponseEntity<MissingChildRegisterDto> registerMissingChild(
+            @RequestParam("missingChild") String missingChildJson,
+            @RequestParam("mainImage") MultipartFile mainImage,
+            @RequestParam(value = "trainImages", required = false) List<MultipartFile> trainImages) throws JsonProcessingException {
+
+        // JSON 문자열을 DTO로 변환
+        // ObjectMapper에 JavaTimeModule 등록 // LocalDateTime 직렬화-역직렬화 문제 해결을 위함
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        MissingChildDto missingChildDto = objectMapper.readValue(missingChildJson, MissingChildDto.class);
+
+        // 서비스 호출
+        MissingChildRegisterDto responseDto = missingChildService.saveMissingChildWithImages(missingChildDto, mainImage, trainImages);
+
         return ResponseEntity.ok(responseDto);
     }
 

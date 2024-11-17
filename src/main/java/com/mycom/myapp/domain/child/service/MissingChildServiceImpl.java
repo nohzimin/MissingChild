@@ -15,7 +15,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class MissingChildServiceImpl implements MissingChildService {
     private final MissingChildRepository missingChildRepository;
     private final UserRepository userRepository;
     private final ChildTrainImageRepository childTrainImageRepository;
+    private final S3Service s3Service;
 
 
 
@@ -66,7 +69,7 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildResultDto;
     }
 
-    // 모든 missingChild pagenation 해서 가져오기
+    // 모든 missingChild 페이지네이션 해서 가져오기
     @Override
     public Page<MissingChildDto> getAllMissingChild(Pageable pageable) {
         Page<MissingChild> missingChildPage = missingChildRepository.findAll(pageable);
@@ -200,36 +203,23 @@ public class MissingChildServiceImpl implements MissingChildService {
         return missingChildDto;
     }
 
-//    @Override
-//    @Transactional
-//    public MissingChild saveMissingChild(MissingChildDto missingChildDto) {
-//        User user = userRepository.findById(missingChildDto.getUserId())
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-//
-//        MissingChild missingChild = new MissingChild();
-//        missingChild.setChildName(missingChildDto.getChildName());
-//        missingChild.setChildGender(missingChildDto.getChildGender());
-//        missingChild.setDateOfBirth(missingChildDto.getDateOfBirth());
-//        missingChild.setChildAge(missingChildDto.getChildAge());
-//        missingChild.setLastKnownLocation(missingChildDto.getLastKnownLocation());
-//        missingChild.setMissingSince(missingChildDto.getMissingSince());
-//        missingChild.setPhotoUrl(missingChildDto.getPhotoUrl());
-//        missingChild.setUser(user);
-//
-//        return missingChildRepository.save(missingChild);
-//    }
 
     @Override
     @Transactional
-    public MissingChildRegisterDto saveMissingChildWithImages(MissingChildRegisterDto missingChildRegisterDto) {
-        MissingChildDto missingChildDto = missingChildRegisterDto.getMissingChildDto();
-        List<ChildTrainImageDto> childTrainImageDtoList = missingChildRegisterDto.getChildTrainImageDtoList();
+    public MissingChildRegisterDto saveMissingChildWithImages(
+            MissingChildDto missingChildDto,
+            MultipartFile mainImage,
+            List<MultipartFile> trainImages) {
 
-        // 사용자 정보 조회
-        User user = userRepository.findById(missingChildDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
+        // 현재 로그인된 사용자 가져오기
+        String loggedInUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(loggedInUserEmail); // 이미 존재하는 메서드 활용
 
-        // MissingChild 엔티티 설정
+        if (user == null) {
+            throw new IllegalArgumentException("로그인된 사용자를 찾을 수 없습니다.");
+        }
+
+        // MissingChild 엔티티 생성
         MissingChild missingChild = new MissingChild();
         missingChild.setChildName(missingChildDto.getChildName());
         missingChild.setChildGender(missingChildDto.getChildGender());
@@ -237,29 +227,46 @@ public class MissingChildServiceImpl implements MissingChildService {
         missingChild.setChildAge(missingChildDto.getChildAge());
         missingChild.setLastKnownLocation(missingChildDto.getLastKnownLocation());
         missingChild.setMissingSince(missingChildDto.getMissingSince());
-        missingChild.setPhotoUrl(missingChildDto.getPhotoUrl());
-        missingChild.setUser(user);
+        missingChild.setUser(user); // 현재 사용자 설정
 
-        // MissingChild 엔티티 저장
+        // MissingChild 엔티티를 먼저 저장 (ID 생성)
         MissingChild savedChild = missingChildRepository.save(missingChild);
 
-        // 학습 이미지 리스트 저장
-        if (childTrainImageDtoList != null && !childTrainImageDtoList.isEmpty()) {
-            for (ChildTrainImageDto imageDto : childTrainImageDtoList) {
-                ChildTrainImage trainImage = new ChildTrainImage();
-                trainImage.setImageUrl(imageDto.getImageUrl());
-                trainImage.setMissingChild(savedChild);
-                ChildTrainImage savedImage = childTrainImageRepository.save(trainImage);
-                imageDto.setImageId(savedImage.getImageId());
-                imageDto.setChildId(savedChild.getChildId());
+        // 대표 이미지 S3 업로드
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String profileFolder = "ChildProfile/";
+            String mainImageUrl = s3Service.uploadImage(mainImage, profileFolder + savedChild.getChildId() + "-profile.jpg");
+            savedChild.setPhotoUrl(mainImageUrl);
+            missingChildRepository.save(savedChild); // 대표 이미지 URL 업데이트
+        }
+
+        // 학습 이미지 업로드 및 저장
+        List<ChildTrainImageDto> childTrainImageDtoList = new ArrayList<>();
+        if (trainImages != null && !trainImages.isEmpty()) {
+            String trainFolder = "TrainData/" + savedChild.getChildId() + "/";
+            for (MultipartFile trainImage : trainImages) {
+                String trainImageUrl = s3Service.uploadImage(trainImage, trainFolder);
+
+                // ChildTrainImage 엔티티 생성 및 저장
+                ChildTrainImage trainImageEntity = new ChildTrainImage();
+                trainImageEntity.setImageUrl(trainImageUrl);
+                trainImageEntity.setMissingChild(savedChild);
+                childTrainImageRepository.save(trainImageEntity);
+
+                // DTO 리스트에 추가
+                ChildTrainImageDto trainImageDto = new ChildTrainImageDto();
+                trainImageDto.setImageUrl(trainImageUrl);
+                trainImageDto.setChildId(savedChild.getChildId());
+                childTrainImageDtoList.add(trainImageDto);
             }
         }
 
-        // 반환할 DTO 설정
-        missingChildDto.setChildId(savedChild.getChildId());
+        // 반환 DTO 생성
         MissingChildRegisterDto responseDto = new MissingChildRegisterDto();
+        missingChildDto.setChildId(savedChild.getChildId());
         responseDto.setMissingChildDto(missingChildDto);
         responseDto.setChildTrainImageDtoList(childTrainImageDtoList);
+
         return responseDto;
     }
 
