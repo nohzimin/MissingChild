@@ -222,6 +222,17 @@
         recentList();
     }
 
+
+    const getImgSrc = (photoUrl) => {
+        if (!photoUrl) {
+            return "/assets/img/child/default-image.jpg";
+        } else if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+            return photoUrl;
+        } else {
+            return `/assets/img/child/${photoUrl}`;
+        }
+    };
+
     async function recentList() {
         let url = "/api/missing-child/recentList";
         let response = await fetch(url);
@@ -241,10 +252,12 @@
                 cardsWrapper.className = 'cards-wrapper';
 
                 groupCards.forEach(child => {
+                    // imgSrc 결정
+                    const imgSrc = getImgSrc(child.photoUrl);
                     let card = document.createElement('div');
                     card.className = 'case-card';
                     card.innerHTML = `
-                    <img src="${child.photoUrl}" alt="${child.childName}">
+                    <img src="${imgSrc}" alt="${child.childName}">
                     <div class="case-info">
                         <h3>${child.childName}</h3>
                         <p>현재나이: <span>${child.childAge}</span>세</p>
@@ -279,9 +292,11 @@
             const child = await response.json();
 
             const genderText = child.childGender === "M" ? "남자" : "여자";
+            // imgSrc 결정
+            const imgSrc = getImgSrc(child.photoUrl);
 
             const detailHtml = `
-            <img src="${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <img src="${imgSrc}" class="img-fluid mb-3" alt="${child.childName}">
             <h5>이름: ${child.childName}</h5>
             <p>나이: ${child.childAge}세</p>
             <p>생일: ${child.dateOfBirth}</p>
