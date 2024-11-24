@@ -42,8 +42,8 @@ public class UserController {
 
 
     // 유저페이지 정보 조회 (로그인한 사용자)
-    @GetMapping("/userpage")
-    public String detailUserPage(HttpSession session, Model model) {
+    @GetMapping("/mypage")
+    public String MyPage(HttpSession session, Model model) {
 
         // 세션에서 사용자 이메일을 가져옴
         String email = (String) session.getAttribute("userEmail");

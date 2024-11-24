@@ -113,8 +113,8 @@ public class UserServiceImpl implements UserService {
                 if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
                     String encodedPassword = bCryptPasswordEncoder.encode(userDto.getPassword());
                     user.setPassword(encodedPassword);
-                    user.setNickName(userDto.getNickName());
                 }
+                user.setNickName(userDto.getNickName());
                 user.setPhone(userDto.getPhone());
 
                 userRepository.save(user);

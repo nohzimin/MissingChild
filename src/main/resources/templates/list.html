@@ -11,90 +11,275 @@
 
   <link rel="stylesheet" href="/assets/css/header.css">
 
+
   <style>
     body {
+      background-color: #f5f5f5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
 
-    }
     .search-container {
-      background-color: #f9f9f9;
-      border: 1px solid #e5e5e5;
-      border-radius: 0.5rem;
-      padding: 2rem;
+      background-color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 2.5rem;
       margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     }
-    #imagePreview {
-      width: 100%;
-      height: 200px;
-      border: 1px solid #e5e5e5;
-      border-radius: 0.25rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
+
+    #searchResults {
+      padding: 2rem;
+      margin: 0 auto;
+      max-width: 1400px;
     }
-    #imagePreview img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+
     .result-card {
-      margin: 10px; /* 카드 간격 조정 */
+      margin: 15px;
+      transition: all 0.3s ease;
     }
+
+    .result-card .card {
+      border: none;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .result-card .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+    }
+
     .result-card img {
-      height: 150px;
+      height: 200px;
+      width: 100%;
       object-fit: cover;
+      transition: transform 0.3s ease;
     }
-    .image-search-label {
-      font-size: 1.5rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      color: #000000;
+
+    .result-card .card:hover img {
+      transform: scale(1.05);
     }
-    .search-btn {
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-title {
       font-size: 1.2rem;
-      padding: 0.5rem 2rem;
-      background-color: #212121;
-      border-color: #ffddee;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 1rem;
     }
-    .search-btn:hover {
-      background-color: #7b7b7b;
-      border-color: #ffddee;
+
+    .card-text {
+      font-size: 0.9rem;
+      color: #666;
+      line-height: 1.6;
     }
-    .image-search-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
+
+    .card-text span {
+      color: #333;
+      font-weight: 500;
     }
-    .no-results {
-      border: 1px solid #e5e5e5;
-      border-radius: 0.5rem;
-      background-color: #f9f9f9;
-      padding: 1rem;
-      text-align: center;
-    }
+
     .load-more {
       display: flex;
       justify-content: center;
-      margin-top: 20px;
-      margin-bottom: 30px;
+      margin: 2rem 0 3rem;
     }
 
     .load-more button {
-      background-color: white; /* 배경색을 하얀색으로 */
-      border: 2px solid black; /* 테두리를 검정색으로 */
-      color: black; /* 글자색을 검정색으로 */
+      padding: 0.8rem 2.5rem;
+      font-size: 1.1rem;
+      background-color: white;
+      color: #333;
+      border: 2px solid #333;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .load-more button:hover {
-      background-color: black; /* 호버 시 배경색 변경 */
+      background-color: #333;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .load-more button:active {
+      transform: translateY(0);
+    }
+
+    /* 모달 스타일 */
+    .modal-content {
+      border: none;
+      border-radius: 25px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      background-color: #333;
+      color: white;
+      border-bottom: none;
+      padding: 1.5rem;
+    }
+
+    .modal-title {
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-body img {
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-body h5 {
+      color: #333;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .modal-body p {
+      color: #666;
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+    }
+
+    .btn-close {
+      color: white;
+      opacity: 1;
+    }
+
+    /* 애니메이션 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #searchResults {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+      .result-card {
+        margin: 10px;
+      }
+
+      .card-body {
+        padding: 1rem;
+      }
+
+      .load-more button {
+        padding: 0.6rem 2rem;
+        font-size: 1rem;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .result-card .card {
+        margin: 0.5rem;
+      }
+    }
+
+    /* No Results 스타일 */
+    .no-results {
+      width: 100%;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      text-align: center;
+      background-color: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin: 2.5rem 0;
+    }
+
+    .pagination {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background-color: #ffffff;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .pagination .page-item {
+      list-style: none;
+    }
+
+    .pagination .page-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      margin: 0;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      color: #333;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #333;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .pagination .page-item:first-child .page-link,
+    .pagination .page-item:last-child .page-link {
+      width: auto;
+      padding: 0 1.2rem;
+      border-radius: 25px;
+      font-weight: 600;
+      background-color: #f8f9fa;
+    }
+
+    .pagination .page-link:hover:not(.disabled) {
+      background-color: #333;
+      color: #fff;
+      transform: scale(1.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .pagination .page-item.disabled .page-link {
+      background-color: #f8f9fa;
+      color: #ccc;
+      cursor: not-allowed;
+      opacity: 0.7;
     }
 
   </style>
+
+
 </head>
-<body><header class="top-header">
+<body>
+<header class="top-header">
   <div class="header-container">
     <!-- 로고와 왼쪽 네비게이션 -->
     <div class="nav-group">
@@ -167,9 +352,11 @@
   <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
 </div>
 
-<div class="load-more">
-  <button id="loadMoreBtn" class="btn btn-primary">더보기</button>
-</div>
+<!-- 페이지네이션 컨테이너 추가 -->
+<div class="pagination-container">
+  <ul class="pagination" id="pagination">
+    <!-- 페이지네이션 버튼이 여기에 동적으로 추가됩니다 -->
+  </ul>
 
 
 
@@ -187,72 +374,104 @@
   </div>
 </div>
 
+<script src="/assets/js/header.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  let currentCount = 0; // 현재 표시된 카드 수
-  const cardsPerPage = 5; // 한 줄에 표시할 카드 수
-  const totalCardsToShow = 25; // 총 표시할 카드 수
+  let currentPage = 0;
+  const pageSize = 10;
 
   window.onload = async function () {
-    await list();
+    await loadPage(currentPage);
   }
 
-  async function list() {
-    let url = "/api/missing-child/list";
-    let response = await fetch(url);
-    let data = await response.json();
-
-    if (data.result === "success") {
-      let missingChildDtoList = data.missingChildDtoList;
-
-      // 초기 카드 수 설정
-      displayCards(missingChildDtoList.slice(currentCount, currentCount + totalCardsToShow));
-      currentCount += totalCardsToShow;
-
-      // "더보기" 버튼 클릭 이벤트
-      document.getElementById("loadMoreBtn").addEventListener("click", function() {
-        displayCards(missingChildDtoList.slice(currentCount, currentCount + totalCardsToShow));
-        currentCount += totalCardsToShow;
-
-        // 더 이상 카드가 없으면 버튼 숨김
-        if (currentCount >= missingChildDtoList.length) {
-          this.style.display = 'none';
-        }
-      });
+  const getImgSrc = (photoUrl) => {
+    if (!photoUrl) {
+      return "/assets/img/child/default-image.jpg";
+    } else if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+      return photoUrl;
     } else {
-      alert("상세조회 과정에서 오류가 발생했습니다.");
+      return `/assets/img/child/${photoUrl}`;
+    }
+  };
+
+  async function loadPage(page) {
+    try {
+      const url = `/api/missing-child/list?page=${page}&size=${pageSize}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      // 검색 결과 컨테이너 초기화
+      const searchResults = document.getElementById('searchResults');
+      searchResults.innerHTML = '';
+
+      // 카드 표시
+      data.content.forEach(child => {
+        const cardDiv = document.createElement('div');
+        cardDiv.className = 'col-6 col-md-4 col-lg-2 result-card';
+
+        const genderText = child.childGender === "M" ? "남자" : "여자";
+
+        // imgSrc 결정
+        const imgSrc = getImgSrc(child.photoUrl);
+
+        cardDiv.innerHTML = `
+                <div class="card">
+                    <img src="${imgSrc}" class="card-img-top" alt="${child.childName}">
+                    <div class="card-body">
+                        <h5 class="card-title">${child.childName}</h5>
+                        <p class="card-text">
+                            나이: <span>${child.childAge}</span>세<br>
+                            성별: <span>${genderText}</span><br>
+                            실종 장소: <span>${child.lastKnownLocation}</span><br>
+                            실종 일자: <span>${child.missingSince}</span>
+                        </p>
+                    </div>
+                </div>`;
+
+        cardDiv.addEventListener('click', () => showChildDetail(child.childId));
+        searchResults.appendChild(cardDiv);
+      });
+
+      // 페이지네이션 업데이트
+      updatePagination(data);
+    } catch (error) {
+      console.error("Error loading page:", error);
+      alert("데이터를 불러오는 데 실패했습니다.");
     }
   }
 
-  function displayCards(cards) {
-    const searchResults = document.querySelector('#searchResults');
-    cards.forEach(child => {
-      // 카드 요소 생성
-      const cardDiv = document.createElement('div');
-      cardDiv.className = 'col-6 col-md-4 col-lg-2 result-card';
+  function updatePagination(pageData) {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
 
-      const genderText = child.childGender === "M" ? "남자" : "여자";
+    // 이전 페이지 버튼
+    const prevButton = createPageButton('이전', pageData.number - 1, !pageData.first);
+    pagination.appendChild(prevButton);
 
-      cardDiv.innerHTML = `
-          <div class="card">
-            <img src="/assets/img/child/${child.photoUrl}" class="card-img-top" alt="${child.childName}">
-            <div class="card-body">
-              <h5 class="card-title">${child.childName}</h5>
-              <p class="card-text">
-                나이: <span>${child.childAge}</span>세<br>
-                성별: <span>${genderText}</span><br>
-                실종 장소: <span>${child.lastKnownLocation}</span><br>
-                실종 일자: <span>${child.missingSince}</span>
-              </p>
-            </div>
-          </div>`;
+    // 페이지 번호 버튼들
+    for (let i = 0; i < pageData.totalPages; i++) {
+      if (i >= pageData.number - 2 && i <= pageData.number + 2) {
+        const pageButton = document.createElement('li');
+        pageButton.className = `page-item${pageData.number === i ? ' active' : ''}`;
+        pageButton.innerHTML = `
+                <a class="page-link" href="javascript:void(0)" onclick="loadPage(${i})">${i + 1}</a>
+            `;
+        pagination.appendChild(pageButton);
+      }
+    }
 
-      // 클릭 이벤트 리스너 추가
-      cardDiv.addEventListener('click', () => showChildDetail(child.childId));
+    // 다음 페이지 버튼
+    const nextButton = createPageButton('다음', pageData.number + 1, !pageData.last);
+    pagination.appendChild(nextButton);
+  }
 
-      // searchResults에 카드 요소 추가
-      searchResults.appendChild(cardDiv);
-    });
+  function createPageButton(text, pageNumber, enabled) {
+    const li = document.createElement('li');
+    li.className = `page-item${!enabled ? ' disabled' : ''}`;
+    li.innerHTML = `
+        <a class="page-link" href="javascript:void(0)" ${enabled ? `onclick="loadPage(${pageNumber})"` : ''}>${text}</a>
+    `;
+    return li;
   }
 
   async function showChildDetail(childId) {
@@ -272,9 +491,10 @@
         console.log("Child data:", child);
 
         const genderText = child.childGender === "M" ? "남자" : "여자";
+        const imgSrc = getImgSrc(child.photoUrl);
 
         const detailHtml = `
-            <img src="/assets/img/child/${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <img src="${imgSrc}" class="img-fluid mb-3" alt="${child.childName}">
             <h5>이름: ${child.childName}</h5>
             <p>나이: ${child.childAge}세</p>
             <p>생일: ${child.dateOfBirth}</p>
@@ -297,6 +517,7 @@
     }
   }
 </script>
+
 
 </body>
 </html>

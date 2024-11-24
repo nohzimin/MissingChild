@@ -39,7 +39,6 @@ public interface MissingChildRepository extends JpaRepository<MissingChild, Inte
 
 
 
-
     // 이미지 검색
     @Query("select mc from MissingChild mc where mc.photoUrl LIKE %:className%")
     List<MissingChild> searchByClassName(@Param("className") String className);

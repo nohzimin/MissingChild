@@ -155,7 +155,7 @@
 <!-- 실종아동보기 -->
 <section class="find-child-section">
     <div class="find-child-content">
-        <h2 class="section-title">실종 아동들을 위한 작은 관심이 큰 변화를 만듭니다</h2>
+        <h2 class="section-title">실종 아동들을 위한 작은 관심이 <br> 큰 변화를 만듭니다</h2>
         <a href="/missing-child/list" class="btn btn-primary">실종 아동 보기</a>
     </div>
 </section>
@@ -164,30 +164,43 @@
 <section class="recent-cases">
     <div class="container">
         <h2>최근 등록된 실종 아동</h2>
-        <div id="caseCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div id="searchResults" class="cases-grid d-flex justify-content-center">
-                        <!-- 동적으로 추가될 내용 -->
-                    </div>
+        <div class="carousel-container">
+            <div id="caseCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner" id="searchResults">
+                    <!-- 여기에 동적으로 카드들이 추가됩니다 -->
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#caseCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#caseCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#caseCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#caseCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </div>
 </section>
 
+<!-- 아동 상세 정보 모달 -->
+<div id="childDetailModal" class="modal fade" tabindex="-1" aria-labelledby="childDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="childDetailLabel">아동 상세 정보</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="childDetailContent">
+                <!-- 아동 상세 정보가 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Footer -->
 <footer>
     <p>&copy; 노나리조</p>
-    <a href="#" class="scroll-top">맨 위로</a>
+    <a href="#" class="scroll-top">🔝</a>
 </footer>
 
 <!-- 사용자 이메일을 서버에서 받아와 세션 스토리지에 저장 -->
@@ -202,34 +215,102 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="/assets/js/chartAnimations.js"></script>
+<script src="/assets/js/header.js"></script>
 
 <script>
     window.onload = async function () {
         recentList();
     }
 
+
+    const getImgSrc = (photoUrl) => {
+        if (!photoUrl) {
+            return "/assets/img/child/default-image.jpg";
+        } else if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+            return photoUrl;
+        } else {
+            return `/assets/img/child/${photoUrl}`;
+        }
+    };
+
     async function recentList() {
         let url = "/api/missing-child/recentList";
         let response = await fetch(url);
         let data = await response.json();
-        if(data.result == "success") {
-            console.log(data);
-
+        if (data.result == "success") {
             let missingChildDtoList = data.missingChildDtoList;
-            let listHtml = ``;
-            missingChildDtoList.forEach(child => {
-                listHtml += `<div class="case-card mx-3">
-                    <img src="/assets/img/child/${child.photoUrl}" alt="${child.childName}">
+            let searchResults = document.querySelector('#searchResults');
+            searchResults.innerHTML = ''; // 기존 내용 초기화
+
+            // 4개씩 그룹화
+            for (let i = 0; i < missingChildDtoList.length; i += 4) {
+                let groupCards = missingChildDtoList.slice(i, i + 4);
+                let carouselItem = document.createElement('div');
+                carouselItem.className = 'carousel-item' + (i === 0 ? ' active' : '');
+
+                let cardsWrapper = document.createElement('div');
+                cardsWrapper.className = 'cards-wrapper';
+
+                groupCards.forEach(child => {
+                    // imgSrc 결정
+                    const imgSrc = getImgSrc(child.photoUrl);
+                    let card = document.createElement('div');
+                    card.className = 'case-card';
+                    card.innerHTML = `
+                    <img src="${imgSrc}" alt="${child.childName}">
                     <div class="case-info">
                         <h3>${child.childName}</h3>
                         <p>현재나이: <span>${child.childAge}</span>세</p>
                         <p>실종일자: <br> <span>${child.missingSince}</span></p>
                     </div>
-                </div>`;
-            });
-            document.querySelector('#searchResults').innerHTML = listHtml;
+                `;
+
+                    // 클릭 이벤트 추가
+                    card.addEventListener('click', () => showChildDetail(child.childId));
+
+                    cardsWrapper.appendChild(card);
+                });
+
+                carouselItem.appendChild(cardsWrapper);
+                searchResults.appendChild(carouselItem);
+            }
         } else {
             alert("상세조회 과정에서 오류가 발생했습니다.");
+        }
+    }
+
+    // 아동 상세 정보 모달 표시 함수
+    async function showChildDetail(childId) {
+        try {
+            const url = `/api/missing-child/list/${childId}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("아동 상세 정보를 불러오는 데 실패했습니다.");
+            }
+
+            const child = await response.json();
+
+            const genderText = child.childGender === "M" ? "남자" : "여자";
+            // imgSrc 결정
+            const imgSrc = getImgSrc(child.photoUrl);
+
+            const detailHtml = `
+            <img src="${imgSrc}" class="img-fluid mb-3" alt="${child.childName}">
+            <h5>이름: ${child.childName}</h5>
+            <p>나이: ${child.childAge}세</p>
+            <p>생일: ${child.dateOfBirth}</p>
+            <p>성별: ${genderText}</p>
+            <p>실종 장소: ${child.lastKnownLocation}</p>
+            <p>실종 일자: ${child.missingSince}</p>
+        `;
+            document.getElementById("childDetailContent").innerHTML = detailHtml;
+
+            const modal = new bootstrap.Modal(document.getElementById("childDetailModal"));
+            modal.show();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("오류가 발생했습니다. 다시 시도해주세요.");
         }
     }
 
@@ -241,7 +322,77 @@
             behavior: 'smooth'
         });
     });
-</script>
 
+    // 스크롤 탑 버튼 표시/숨김 처리
+    window.addEventListener('scroll', function() {
+        const scrollTop = document.querySelector('.scroll-top');
+        if (window.scrollY > 500) {
+            scrollTop.classList.add('visible');
+        } else {
+            scrollTop.classList.remove('visible');
+        }
+    });
+
+    // 차트 애니메이션 효과
+    document.addEventListener('DOMContentLoaded', function() {
+        const options = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                        font: {
+                            size: 12
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            }
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, options);
+
+        document.querySelectorAll('.chart-container').forEach(chart => {
+            observer.observe(chart);
+        });
+    });
+
+    // 피처 카드 애니메이션
+    document.querySelectorAll('.feature-item').forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.querySelector('.card').style.transform = 'rotateY(180deg)';
+        });
+
+        item.addEventListener('mouseleave', function() {
+            this.querySelector('.card').style.transform = 'rotateY(0deg)';
+        });
+    });
+</script>
 </body>
 </html>

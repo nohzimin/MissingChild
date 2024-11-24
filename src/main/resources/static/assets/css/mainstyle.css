@@ -3,241 +3,105 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
-    background-color: #f8f9fa;
+    background-color: #f5f5f5;
     color: #333;
     overflow-x: hidden;
-}
-/* 헤더 스타일 */
-/* 헤더 스타일 */
-.top-header {
-    border-bottom: 1px solid #eee;
-    padding: 15px 0;
-    background: white;
-    width: 100%; /* 추가 */
-}
-
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%; /* max-width 제거하고 width 100%로 변경 */
-    padding: 0 40px; /* 패딩 값 수정 */
-}
-
-/* 나머지 스타일은 동일하게 유지 */
-
-/* 로고 스타일 */
-.logo {
-    display: flex;
-    align-items: center;
-}
-
-.logo-image {
-    height: 35px;
-    width: auto;
-}
-
-/* 왼쪽 네비게이션 그룹 */
-.nav-group {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-left: 20px;
-}
-
-.nav-dropdown {
-    position: relative;
-}
-
-.dropdown-toggle {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #333;
-    background: none;
-    border: 1px solid transparent;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.dropdown-toggle:hover {
-    border-color: #ddd;
-    background-color: #f8f8f8;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 8px 0;
-    min-width: 160px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    display: none;
-    z-index: 1000;
-}
-
-.nav-dropdown:hover .dropdown-menu {
-    display: block;
-}
-
-.dropdown-menu a {
-    display: block;
-    padding: 8px 16px;
-    color: #333;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.dropdown-menu a:hover {
-    background-color: #f5f5f5;
-}
-
-/* 네비게이션 링크 공통 스타일 */
-.nav-link {
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 14px;
-    color: #333;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    border: 1px solid #ddd;
-}
-
-.nav-link:hover {
-    background-color: #f8f8f8;
-}
-
-/* 오른쪽 네비게이션 */
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-right .nav-item {
-    display: flex;
-    align-items: center;
-}
-
-.nav-right .nav-link {
-    border: 1px solid #ddd; /* 기존 테두리 스타일 */
-}
-
-/* 마이페이지와 이름 표시 링크는 테두리 제거 */
-.nav-right .nav-link[href="/mypage"],
-.nav-right .nav-link:not([href]) {  /* 이름 표시는 href가 없는 링크 */
-    border: none;
-}
-
-.nav-right .nav-link.dark {
-    background-color: #333;
-    color: white;
-    border-color: #333;
-}
-
-.nav-right .nav-link.dark:hover {
-    background-color: #222;
-}
-
-/* 아이콘 스타일 */
-.nav-icon {
-    font-size: 16px;
-}
-
-/* 반응형 스타일 */
-@media (max-width: 768px) {
-    .nav-group {
-        display: none;
-    }
-
-    .header-container {
-        padding: 0 20px; /* 모바일에서는 좌우 여백을 20px로 조정 */
-    }
-
-    .nav-right {
-        gap: 5px;
-    }
-
-    .nav-link {
-        padding: 6px 12px;
-        font-size: 13px;
-    }
-
-    .logo-image {
-        height: 30px;
-    }
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Hero Section */
 .hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+    background-image: url('/assets/img/index/back4.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 80vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 60vh; 
-    background-color: #ffffff; /* 흰색 배경 */
-    color: #333333; /* 텍스트를 짙은 검정색으로 설정 */
     text-align: center;
+    position: relative;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.4; }
+    100% { opacity: 0.3; }
 }
 
 .hero-content {
-    max-width: 800px; /* 중앙에 깔끔하게 정렬 */
+    max-width: 800px;
     padding: 2rem;
+    color: white;
+    z-index: 1;
+    animation: fadeInUp 1s forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .hero h1 {
-    font-size: 2.6rem; /* 큰 제목 크기 설정 */
+    font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
-    color: #000000;
-    margin-bottom: 1.5rem; /* <h1>과 <p> 간의 간격을 넓히기 위해 여백을 추가 */
+    margin-bottom: 1.5rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero p {
-    font-size: 1.28rem; /* 설명 텍스트의 크기 조정 */
-    color: #555555; /* 부드러운 검정으로 설명 텍스트 */
+    font-size: 1.3rem;
+    color: white;
     line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-
 /* Features Section */
+/* Features Section 수정된 부분 */
 .features {
-    padding: 4rem 0; /* 섹션의 위아래 여백 */
+    padding: 5rem 0;
+    background-color: white;
     text-align: center;
 }
 
 .features h2 {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    font-weight: 700;
     color: #333;
-    font-weight: 700; /* 제목을 굵게 설정 */
-    margin: 0; /* 제목 위아래 여백 */
+    margin-bottom: 3rem;
 }
 
-
 .feature-item {
-    perspective: 1000px; /* 3D 회전 효과를 위한 시점 설정 */
+    perspective: 1000px;
+    height: 300px;
+    margin-bottom: 2rem;
 }
 
 .card {
-    width: 100%;
-    height: 300px;
     position: relative;
+    width: 100%;
+    height: 100%;
     transform-style: preserve-3d;
-    transition: transform 0.6s;
-}
-
-.card:hover {
-    transform: rotateY(180deg); /* 마우스 호버 시 카드가 회전 */
+    transition: transform 0.8s;
+    cursor: pointer;
 }
 
 .card-front,
@@ -245,321 +109,436 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden; /* 뒷면이 보이지 않게 설정 */
-    border-radius: 10px;
+    backface-visibility: hidden;
+    border-radius: 25px;
     overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-front {
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .card-front img {
-    width: 50%; /* 이미지 크기를 반으로 줄임 */
-    height: auto; /* 비율 유지 */
+    width: 80%;
+    height: 80%;
     object-fit: contain;
-    border-radius: 10px;
 }
 
 .card-back {
-    background-color: #ffffff;
+    background-color: #333;
+    transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    transform: rotateY(180deg); /* 뒷면을 180도 회전하여 숨김 */
+    padding: 2rem;
 }
 
 .card-back h2 {
-    font-size: 1.5rem;
-    color: #333;
-    font-weight: 700; 
+    color: white;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
 }
 
 .card-back p {
-    color: #666;
+    color: white;
+    font-size: 1.1rem;
+    line-height: 1.6;
 }
 
+.feature-item:hover .card {
+    transform: rotateY(180deg);
+}
 
-
-/* Cases Section */
-.recent-cases {
-    background-color: #ffffff;
+/* Stats Section */
+/* Stats Section 수정된 버전 */
+.stats-section {
     padding: 4rem 0;
+    background-color: white;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 1s ease, transform 1s ease;
+}
+
+.stats-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2.5rem;
+}
+
+.charts-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.chart-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    width: 400px; /* 차트 컨테이너 너비 축소 */
+    min-width: 280px;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto !important; /* 차트 높이 자동 조절 */
+    max-height: 300px; /* 최대 높이 제한 */
+}
+
+.chart-container:hover {
+    transform: translateY(-5px);
+}
+
+.chart-container p {
+    margin-top: 1rem;
+    color: #666;
+    font-size: 1rem;
+}
+
+/* 반응형 디자인 개선 */
+@media (max-width: 992px) {
+    .charts-wrapper {
+        gap: 1.5rem;
+    }
+
+    .chart-container {
+        width: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        padding: 3rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .chart-container canvas {
+        max-height: 250px;
+    }
+
+    .charts-wrapper {
+        gap: 1rem;
+    }
+}
+
+/* Find Child Section */
+.find-child-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/assets/img/index/find.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 6rem 0;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.find-child-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.find-child-content .section-title {
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
+}
+
+.btn-primary {
+    font-size: 1.2rem;
+    padding: 1rem 2.5rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: #1a1a1a;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Recent Cases Section */
+.recent-cases {
+    padding: 5rem 0;
+    background-color: white;
     text-align: center;
 }
-.cases-grid {
+
+.recent-cases h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 3rem;
+}
+
+.carousel-container {
+    position: relative;
+    padding: 0 50px;
+}
+
+.cards-wrapper {
     display: flex;
     gap: 1.5rem;
     justify-content: center;
-    flex-wrap: wrap;
+    padding: 1rem 0;
 }
+
 .case-card {
-    background-color: #ffffff;
-    border-radius: 10px;
+    width: calc(25% - 1.125rem); /* 4개의 카드가 균등하게 배치되도록 설정 */
+    background: white;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 250px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
+
+.case-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
 .case-card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
+    transition: transform 0.3s ease;
 }
+
+.case-card:hover img {
+    transform: scale(1.05);
+}
+
 .case-info {
-    padding: 1rem;
+    padding: 1.5rem;
+}
+
+.case-info h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.case-info p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.case-info span {
+    color: #333;
+    font-weight: 500;
+}
+
+/* 캐러셀 컨트롤 스타일링 */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.carousel-control-prev {
+    left: 0;
+}
+
+.carousel-control-next {
+    right: 0;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    background-color: #1a1a1a;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* 모달 스타일 */
+.modal-content {
+    border: none;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: #333;
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-body img {
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-body h5 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.modal-body p {
+    color: #666;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.btn-close {
+    color: white;
+    opacity: 1;
+}
+
+
+
+/* 반응형 디자인 */
+@media (max-width: 992px) {
+    .case-card {
+        width: calc(33.333% - 1rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .case-card {
+        width: calc(50% - 0.75rem);
+    }
+}
+
+@media (max-width: 576px) {
+    .case-card {
+        width: 100%;
+    }
+
+    .carousel-container {
+        padding: 0 30px;
+    }
 }
 
 /* Footer */
 footer {
     background-color: #333;
-    color: #fff;
-    padding: 1.5rem 0;
+    color: white;
     text-align: center;
-}
-footer a {
-    color: #0073e6;
-    text-decoration: none;
-}
-footer a:hover {
-    color: #005bb5;
-}
-
-<!--등록된 아이 팝업카드-->
-.recent-cases {
-    background-color: #ffffff;
-    padding: 4rem 0;
-    text-align: center;
-}
-
-.recent-cases h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 2rem;
-}
-
-.cases-grid {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-}
-
-.case-card {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    width: 250px;
-    transition: transform 0.3s ease;
-}
-
-.case-card:hover {
-    transform: scale(1.05);
-}
-
-.case-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.case-info {
-    padding: 1rem;
-}
-
-.case-info h3 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.case-info p {
-    color: #666;
-    font-size: 1rem;
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-    width: 5%;
-}
-
-.recent-cases {
-background-color: #ffffff;
-padding: 4rem 0;
-text-align: center;
-}
-
-.recent-cases h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 2rem;
-}
-
-.cases-grid {
-    display: flex;
-    gap: 2rem; /* 카드 간의 간격 조정 */
-    justify-content: center;
-}
-
-.case-card {
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    width: 250px;
-    transition: transform 0.2s ease;
-}
-
-.case-card:hover {
-    transform: scale(1.05);
-}
-
-.case-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.case-info {
-    padding: 1rem;
-}
-
-.case-info h3 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.case-info p {
-    color: #666;
-    font-size: 1rem;
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-    width: 5%;
-}
-
-.stats-section {
-    padding: 4rem 0;
-    background-color: #f9f9f9;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1s ease, transform 1s ease;
-}
-
-.section-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    color: #333;
-}
-
-.charts-wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 10rem; /* 그래프 간의 간격 */
-}
-
-/* 각 그래프와 설명 텍스트 간 간격 설정 */
-
-@media (max-width: 768px) {
-    .charts-wrapper {
-        flex-direction: column;
-        align-items: center;
-    }
-    .chart-container {
-        max-width: 100%;
-    }
-}
-.chart-container {
-    width: 300px;
-    text-align: center;
-    margin-bottom: 2.5rem; /* 그래프와 <p> 간의 간격 */
-}
-
-.chart-container canvas {
-    margin-bottom: 1.5rem; /* 그래프와 그래프 텍스트 사이의 간격 */
-}
-
-.charts-wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 5rem; /* 두 그래프 간격 */
-}
-
-.chart-container {
-    width: 300px;
-    text-align: center;
-}
-
-.stats-section {
-    padding: 4rem 0;
-    background-color: #ffffff; /* 배경을 흰색으로 설정 */
-    text-align: center;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1s ease, transform 1s ease;
-}
-
-
-/* 더 많은 관심으로 실종 아동들이 안전하게 돌아올 수 있습니다 부분 */
-.find-child-section {
-    text-align: center;
-    background-image: url('image/back4.jpg'); /* 배경 이미지 경로 */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    padding: 2rem 0;
     position: relative;
-    color: #ffffff; /* 텍스트 색상 */
-    padding: 9rem 0; /* 섹션 전체 위아래 간격 */
 }
 
-.find-child-content {
-    position: relative;
-    z-index: 2; /* 오버레이 위에 표시 */
-    max-width: 600px;
-    margin: 0 auto;
+.scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: #c4d6e9;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 1rem; /* 텍스트와 버튼 간의 간격 */
-}
-
-.section-title {
-    font-size: 2.5rem; 
-    color: #ffffff;
-    font-weight: 600;
-    margin: 0;
-}
-
-.btn-primary {
-    font-size: 1.1rem; /* 버튼 글자 크기 */
-    padding: 0.85rem 2rem; /* 버튼 안쪽 여백  */
-    background-color: #ffffffe2; /* 버튼색 */
-    color: #333333; 
-    border: 1px solid #dddddd; 
-    border-radius: 12px; /* 모서리 */
+    justify-content: center;
     text-decoration: none;
-    transition: background-color 0.3s ease;
-    margin-bottom: 2rem; /* 버튼 아래 여백 */
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.btn-primary:hover {
-    background-color: #2e2e2e;
-    border: 1px solid #dddddd; 
+.scroll-top.visible {
+    opacity: 1;
+    visibility: visible;
 }
 
-/* 반투명 오버레이 */
-.find-child-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3); /* 반투명 오버레이 */
-    z-index: 1;
+.scroll-top:hover {
+    background-color: #1a1a1a;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* 캐러셀 컨트롤 */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+    opacity: 0.8;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .chart-container {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .case-card {
+        width: 90%;
+        max-width: 280px;
+    }
+
+    .charts-wrapper {
+        gap: 2rem;
+    }
 }
