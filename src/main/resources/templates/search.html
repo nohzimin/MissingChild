@@ -470,6 +470,16 @@
   });
 
 
+  const getImgSrc = (photoUrl) => {
+    if (!photoUrl) {
+      return "/assets/img/child/default-image.jpg";
+    } else if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+      return photoUrl;
+    } else {
+      return `/assets/img/child/${photoUrl}`;
+    }
+  };
+
 
   function renderSearchResults(missingChildDtoList) {
     const searchResultsContainer = document.querySelector('#searchResults');
@@ -485,9 +495,11 @@
       // 검색 결과가 있는 경우 해당 결과를 렌더링
       missingChildDtoList.forEach(child => {
         const card = document.createElement('div');
+        // imgSrc 결정
+        const imgSrc = getImgSrc(child.photoUrl);
         card.className = 'card result-card';
         card.innerHTML = `
-                <img src="${child.photoUrl}" class="card-img-top" alt="${child.childName}">
+                <img src="${imgSrc}" class="card-img-top" alt="${child.childName}">
                 <div class="card-body">
                     <h5 class="card-title">${child.childName}</h5>
                     <p class="card-text">
@@ -518,9 +530,11 @@
       const child = await response.json();
 
       const genderText = child.childGender === "M" ? "남자" : "여자";
+      // imgSrc 결정
+      const imgSrc = getImgSrc(child.photoUrl);
 
       const detailHtml = `
-            <img src="${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <img src="${imgSrc}" class="img-fluid mb-3" alt="${child.childName}">
             <h5>이름: ${child.childName}</h5>
             <p>나이: ${child.childAge}세</p>
             <p>생일: ${child.dateOfBirth}</p>
@@ -567,20 +581,6 @@
     }
   }
 
-  // async function predict(image) {
-  //   const prediction = await model.predict(image, false);
-  //
-  //   for (let i = 0; i < maxPredictions; i++) {
-  //     let classPrediction = "";
-  //     if (prediction[i].probability >= 0.3) {
-  //       classPrediction = `<div style="margin:10px;">${prediction[i].className} : ${(prediction[i].probability * 100).toFixed(2)}%</div>
-  //                          <div class="progress">
-  //                            <div class="progress-bar" role="progressbar" style="width: ${prediction[i].probability * 100}%"></div>
-  //                          </div>`;
-  //     }
-  //     labelContainer.childNodes[i].innerHTML = classPrediction;
-  //   }
-  // }
 
 
   async function predict(image) {

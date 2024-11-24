@@ -37,7 +37,7 @@ public class PostController {
                                @RequestParam(required = false) String searchCategory,
                                @RequestParam(required = false) String searchKeyword) {
 
-        // 세션에서 사용자 이메일, 자녀 아이디를 가져옴
+        // 세션에서 사용자 이메일 가져옴
         String email = (String) session.getAttribute("userEmail");
         User user = userRepository.findByEmail(email);
         model.addAttribute("user", user);
@@ -56,6 +56,35 @@ public class PostController {
 
 
         return "PostList";
+    }
+
+    // 비밀 게시글 전체 리스트 불러오기
+    // 페이지 네이션
+    @GetMapping("/secret-post/list")
+    public String SecretPostListPage(HttpSession session, Model model,
+                               @RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(required = false) String searchCategory,
+                               @RequestParam(required = false) String searchKeyword) {
+
+        // 세션에서 사용자 이메일 가져옴
+        String email = (String) session.getAttribute("userEmail");
+        User user = userRepository.findByEmail(email);
+        model.addAttribute("user", user);
+
+
+        int pageSize = 10;  // 한 페이지당 게시글 수
+
+//        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("createdAt").descending());
+//        Page<PostDto> postsPage = postService.searchPosts(searchCategory, searchKeyword, pageable);
+//
+//        model.addAttribute("postsPage", postsPage);
+//        model.addAttribute("searchCategory", searchCategory);
+//        model.addAttribute("searchKeyword", searchKeyword);
+//
+//        model.addAttribute("postsPage", postsPage);
+
+
+        return "SecretPostList";
     }
 
 

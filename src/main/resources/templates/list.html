@@ -384,6 +384,16 @@
     await loadPage(currentPage);
   }
 
+  const getImgSrc = (photoUrl) => {
+    if (!photoUrl) {
+      return "/assets/img/child/default-image.jpg";
+    } else if (photoUrl.startsWith("http://") || photoUrl.startsWith("https://")) {
+      return photoUrl;
+    } else {
+      return `/assets/img/child/${photoUrl}`;
+    }
+  };
+
   async function loadPage(page) {
     try {
       const url = `/api/missing-child/list?page=${page}&size=${pageSize}`;
@@ -401,9 +411,12 @@
 
         const genderText = child.childGender === "M" ? "남자" : "여자";
 
+        // imgSrc 결정
+        const imgSrc = getImgSrc(child.photoUrl);
+
         cardDiv.innerHTML = `
                 <div class="card">
-                    <img src="${child.photoUrl}" class="card-img-top" alt="${child.childName}">
+                    <img src="${imgSrc}" class="card-img-top" alt="${child.childName}">
                     <div class="card-body">
                         <h5 class="card-title">${child.childName}</h5>
                         <p class="card-text">
@@ -478,9 +491,10 @@
         console.log("Child data:", child);
 
         const genderText = child.childGender === "M" ? "남자" : "여자";
+        const imgSrc = getImgSrc(child.photoUrl);
 
         const detailHtml = `
-            <img src="${child.photoUrl}" class="img-fluid mb-3" alt="${child.childName}">
+            <img src="${imgSrc}" class="img-fluid mb-3" alt="${child.childName}">
             <h5>이름: ${child.childName}</h5>
             <p>나이: ${child.childAge}세</p>
             <p>생일: ${child.dateOfBirth}</p>
@@ -505,5 +519,5 @@
 </script>
 
 
-  </body>
+</body>
 </html>
