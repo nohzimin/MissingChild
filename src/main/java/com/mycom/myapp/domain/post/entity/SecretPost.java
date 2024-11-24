@@ -29,8 +29,8 @@ public class SecretPost {
     private String status = "미완료"; // 기본값: 미완료
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false) // user_id가 null일 수 없음
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
@@ -40,5 +40,12 @@ public class SecretPost {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
+
+    @Column(nullable = true)
+    private LocalDateTime answerCreatedAt;
+
+    @Column(nullable = true)
+    private LocalDateTime answerUpdatedAt;
+
 }

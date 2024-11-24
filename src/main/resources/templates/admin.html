@@ -54,11 +54,13 @@
 <!-- Main Content -->
 <div id="main-content" class="container mt-5">
     <h1>실종 아동 관리 시스템</h1>
-
-    <!-- 실종 아동 추가 버튼 -->
-    <button class="btn btn-primary mb-3" onclick="window.location.href='/admin/missing-child/insert'">실종 아동 추가</button>
+    <!-- 관리자 1:1 문의 관리  -->
+    <button class="btn btn-primary mb-3" onclick="window.location.href='/admin/secret-post'">1:1 문의 관리</button>
 
     <p>실종 아동 목록:</p>
+    <!-- 실종 아동 추가 버튼 -->
+    <button class="btn btn-primary mb-3" onclick="window.location.href='/missing-child/register'">실종 아동 추가</button>
+
     <table id="childTable" class="table table-bordered">
         <thead>
         <tr>

@@ -15,5 +15,7 @@ public class SecretPostDto {
     private String answer;      // 답변 내용 (관리자만 입력 가능)
     private String createdAt;   // 생성 시간
     private String updatedAt;   // 수정 시간
+    private String answerCreatedAt;   // 답변 생성 시간
+    private String answerUpdatedAt;   // 답변 수정 시간
     private String authorName;  // 작성자 이름
 }
