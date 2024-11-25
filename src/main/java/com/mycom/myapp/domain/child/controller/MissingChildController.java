@@ -11,6 +11,7 @@ import com.mycom.myapp.domain.child.entity.MissingChild;
 import com.mycom.myapp.domain.child.service.MissingChildService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -28,21 +29,42 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MissingChildController {
 
-    // s3 예시 : https://velog.io/@leeeeeyeon/AWS-S3%EB%A1%9C-%ED%8C%8C%EC%9D%BC-%EC%84%9C%EB%B2%84%EB%A5%BC-%EB%A7%8C%EB%93%A4%EC%96%B4%EB%B3%B4%EC%9E%90
-
     private final MissingChildService missingChildService;
-//    private final ImageUploadService imageUploadService;
 
 //    @GetMapping("/list")
-//    public MissingChildResultDto getAllMissingChild(){
-//        return missingChildService.getAllMissingChild();
+//    public Page<MissingChildDto> getAllMissingChild(@PageableDefault(size = 10, sort = "missingSince", direction = Sort.Direction.DESC) Pageable pageable) {
+//        return missingChildService.getAllMissingChild(pageable);
 //    }
 
-
     @GetMapping("/list")
-    public Page<MissingChildDto> getAllMissingChild(@PageableDefault(size = 10, sort = "missingSince", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Page<MissingChildDto> getAllMissingChild(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(defaultValue = "oldest") String sort) {
+
+        // 정렬 기준을 동적으로 처리
+        Sort sorting;
+        switch (sort) {
+            case "name":
+                sorting = Sort.by(Sort.Direction.ASC, "childName"); // 이름순
+                break;
+            case "recent":
+                sorting = Sort.by(Sort.Direction.DESC, "missingSince"); // 최근 실종 순
+                break;
+            case "oldest":
+                sorting = Sort.by(Sort.Direction.ASC, "missingSince"); // 오래된 순
+                break;
+            default:
+                sorting = Sort.by(Sort.Direction.DESC, "createdAt"); // 기본값 (최신순)
+        }
+
+        // 페이지 정보와 정렬 기준을 포함한 Pageable 생성
+        Pageable pageable = PageRequest.of(page, size, sorting);
+
+        // 서비스 호출
         return missingChildService.getAllMissingChild(pageable);
     }
+
 
 
     @PostMapping("/search")
