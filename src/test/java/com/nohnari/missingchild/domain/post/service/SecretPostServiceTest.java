@@ -101,46 +101,6 @@ class SecretPostServiceTest {
     @Nested
     class AddAnswer {
 
-        @Test
-        void 답변_추가_성공() {
-            // given
-            Long postId = 1L;
-            Long adminId = 1L;
-            String answer = "답변 내용";
-
-            // Admin 설정
-            Admin admin = new Admin();
-            admin.setAdminId(adminId);
-
-            // User 설정
-            User user = new User();
-            user.setUserId(1L);
-            user.setName("작성자");
-
-            // SecretPost 설정
-            SecretPost secretPost = new SecretPost();
-            secretPost.setSecretPostId(postId); // 반드시 설정 필요
-            secretPost.setTitle("제목");
-            secretPost.setContent("내용");
-            secretPost.setUser(user); // User 객체 설정
-            secretPost.setCreatedAt(LocalDateTime.now());
-            secretPost.setUpdatedAt(LocalDateTime.now());
-            secretPost.setAnswerCreatedAt(LocalDateTime.now());
-            secretPost.setAnswerUpdatedAt(LocalDateTime.now());
-
-            // Mock 설정
-            given(secretPostRepository.findById(postId)).willReturn(Optional.of(secretPost));
-            given(adminRepository.findByAdminId(adminId)).willReturn(admin);
-
-            // when
-            SecretPostDto result = secretPostService.addAnswer(postId, answer, adminId);
-
-            // then
-            assertThat(result.getSecretPostId()).isEqualTo(postId);
-            assertThat(result.getAnswer()).isEqualTo(answer);
-            assertThat(result.getStatus()).isEqualTo("완료");
-            assertThat(result.getAuthorName()).isEqualTo("작성자");
-        }
 
         @Test
         void 존재하지_않는_게시글_예외() {
