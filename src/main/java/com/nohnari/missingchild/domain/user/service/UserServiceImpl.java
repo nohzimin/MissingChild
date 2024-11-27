@@ -63,14 +63,12 @@ public class UserServiceImpl implements UserService {
 
        User savedUser = userRepository.save(user);
 
-        if (!savedUser.getEmail().isEmpty()) {
-                LOGGER.info("[SIGNUP] 회원가입 성공");
-                signupResultDto.setStatus("회원가입 성공");
-//                setSuccessResult(signupResultDto);
+        if (savedUser == null || savedUser.getEmail() == null || savedUser.getEmail().isEmpty()) {
+            LOGGER.info("[SIGNUP] 회원가입 실패");
+            signupResultDto.setStatus("회원가입 실패");
         } else {
-                LOGGER.info("[SIGNUP] 회원가입 실패");
-                signupResultDto.setStatus("회원가입 실패");
-//                setFailResult(signupResultDto);
+            LOGGER.info("[SIGNUP] 회원가입 성공");
+            signupResultDto.setStatus("회원가입 성공");
         }
 
         return signupResultDto;
