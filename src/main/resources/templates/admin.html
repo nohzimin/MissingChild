@@ -79,7 +79,8 @@
         <tr th:each="child : ${missingChildren}">
             <td th:text="${child.childId}"></td>
             <td th:text="${child.childName}"></td>
-            <td th:text="${child.childGender == 'M' ? '남성' : '여성'}"></td>
+<!--            <td th:text="${child.childGender == 'M' ? '남성' : '여성'}"></td>-->
+            <td th:text="${child.childGender}"></td>
             <td th:text="${child.dateOfBirth}"></td>
             <td th:text="${child.childAge}"></td>
             <td th:text="${child.lastKnownLocation}"></td>
