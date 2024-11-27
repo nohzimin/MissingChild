@@ -24,6 +24,9 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Long getAdminId(String adminEmail) {
         Admin admin = adminRepository.findByAdminEmail(adminEmail);
+        if (admin == null) {
+            throw new IllegalArgumentException("Admin not found with email: " + adminEmail);
+        }
         return admin.getAdminId();
     }
 
